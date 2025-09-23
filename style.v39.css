@@ -1,0 +1,382 @@
+:root {
+  --topbar-h: 64px;
+  --bg: #ffffff;         /* white background (from logo bg) */
+  --card: #ffffff;       /* cards also white */
+  --muted: #6b7280;      /* neutral gray text (lighter than logo gray) */
+  --text: #333333;       /* dark gray/black text like "PLAT" */
+  --accent: #00AEEF;     /* sky blue accent (like "OON") */
+  --accent-600: #0096CC; /* slightly darker blue for hover */
+  --accent-700: #007BA8; /* even darker blue for active state */
+  --danger: #e11d48;     /* keeping red for errors (not in logo, but needed for UI) */
+  --stroke: #e5e7eb;     /* light gray borders */
+  --shadow: 0 10px 30px rgba(0,0,0,.08); /* neutral shadow */
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:linear-gradient(180deg,#f8fafc,#eef2f7);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;min-height:100vh;flex-direction:column;overflow:hidden}
+.w-400{max-width:420px;width:100%}
+.card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:24px;box-shadow:var(--shadow);margin:40px auto}
+h1,h2,h3{margin:0}
+.muted{color:var(--muted)}
+.w-100{width:100%}
+label{display:block;font-size:14px;margin:10px 0}
+
+.btn{background:#ffffff;border:1px solid var(--stroke);color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .05s ease;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.btn:hover{background:#f8fafc;border-color:#dbe3ea}
+.btn.primary{background:var(--accent);border-color:var(--accent-700);color:#ffffff;font-weight:700}
+.btn.danger{background:var(--danger);border-color:#be123c;color:#ffffff}
+.file-btn{display:inline-block}
+ .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--stroke);background:#ffffff;position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--topbar-h)}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:40px;height:40px;border-radius:10px;display:block;box-shadow:0 8px 20px rgba(34,197,94,.18)}
+.title{font-weight:700}
+.subtitle{font-size:12px;color:var(--muted)}
+.container{position:absolute;top:var(--topbar-h);left:0;right:0;bottom:0;overflow:auto;width:min(1400px,100vw);margin:0 auto;padding:12px 16px}
+.actions-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0 14px}
+.table-wrap{overflow:auto;border:1px solid #233148;border-radius:14px;background:#0b1325}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px;border-bottom:1px solid var(--stroke);white-space:nowrap}
+th{background:#f1f5f9;color:#0f172a;padding:10px;border-bottom:1px solid var(--stroke);white-space:nowrap}
+tr:hover{background:rgba(34,197,94,.12)}
+.right{display:flex;justify-content:flex-end;gap:8px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px;z-index:9999}
+.modal-card{width:min(980px,95vw);background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:16px;max-height:90vh;overflow:auto;box-shadow:var(--shadow)}
+.modal.hidden{display:none !important}
+.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--stroke);padding-bottom:8px;margin-bottom:12px}
+.icon-btn{background:transparent;border:1px solid var(--stroke);border-radius:10px;color:#111827;padding:6px 10px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:800px){ .grid{grid-template-columns:1fr} }
+
+/* Queues */
+.queues{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+.qbtn{background:#0f172a;border:1px solid var(--stroke);padding:8px 12px;border-radius:999px;cursor:pointer}
+.qbtn.active{background:var(--accent);color:#0b1220;border-color:#16a34a;font-weight:900}
+.badge{display:inline-block;min-width:20px;padding:2px 6px;border-radius:999px;background:#1f2937;border:1px solid #334155;margin-left:6px;font-size:12px;color:#e5e7eb}
+
+/* Status chip */
+.status-chip{padding:4px 8px;border-radius:999px;border:1px solid var(--stroke);font-size:12px}
+.status-active{background:rgba(16,185,129,.18);color:#a7f3d0;border-color:#10b981}
+.status-inactive{background:rgba(239,68,68,.18);color:#fecaca;border-color:#ef4444}
+.status-prob{background:rgba(250,204,21,.18);color:#fde68a;border-color:#f59e0b}
+
+/* Checkbox column */
+.checkbox-col{width:44px;text-align:center}
+.checkbox-col input[type="checkbox"]{cursor:pointer}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;border-bottom:1px solid var(--stroke);margin-bottom:12px}
+.tab{background:#0f172a;border:1px solid var(--stroke);border-bottom:none;padding:8px 12px;border-radius:10px 10px 0 0;cursor:pointer}
+.tab.active{background:#111827;border-color:#16a34a;color:#d1fae5}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* Attendance grid */
+.row.gap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.legend{display:flex;align-items:center;gap:10px}
+.chip{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;border:1px solid var(--stroke);font-weight:700}
+.chip-p{background:rgba(16,185,129,.15);color:#065f46;border-color:#10b981}
+.chip-n{background:rgba(59,130,246,.15);color:#1d4ed8;border-color:#3b82f6}
+.chip-lp{background:rgba(239,68,68,.15);color:#7f1d1d;border-color:#ef4444}
+.chip-l{background:rgba(250,204,21,.15);color:#92400e;border-color:#f59e0b}
+.chip-wo{background:#1f2937;color:#e5e7eb;border-color:#334155}
+.chip-wot{background:rgba(245,158,11,.20);color:#fde68a;border-color:#f59e0b}
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:8px;margin-top:8px}
+.att-day{background:#0f172a;border:1px solid var(--stroke);border-radius:10px;padding:6px;text-align:center;cursor:pointer}
+.att-day .d{display:block;font-size:12px;color:var(--muted)}
+.att-day .s{display:block;font-size:14px;font-weight:700;white-space:nowrap}
+.att-summary{margin-top:8px}
+
+/* Payslip */
+.payslip{margin-top:10px;background:#0f172a;border:1px solid var(--stroke);border-radius:12px;padding:16px}
+.payslip h4{margin-top:0}
+.payslip .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.payslip .line{display:flex;justify-content:space-between;border-bottom:1px dashed var(--stroke);padding:6px 0}
+@media (max-width:800px){ .payslip .grid{grid-template-columns:1fr} }
+
+/* Offer letter */
+.offer{margin-top:10px;background:#0f172a;border:1px solid var(--stroke);border-radius:12px;padding:16px}
+.offer h4{margin:0 0 8px}
+.offer .muted{font-size:12px}
+.offer .line{display:flex;justify-content:space-between;border-bottom:1px dashed var(--stroke);padding:6px 0}
+.offer .section{margin-top:10px}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+small.note{color:var(--muted)}
+
+/* Dim/blur background while any modal is open and hide header */
+.modal-open #main-screen{filter:brightness(0.95) blur(1px); pointer-events:none}
+.modal-open .topbar{display:none !important}
+
+.topbar-shadow{box-shadow:0 6px 18px rgba(0,0,0,.08)}
+
+
+/* Sticky (pinned) columns */
+th.sticky-col, td.sticky-col{position: sticky; background:#0f172a; z-index: 2}
+th.sticky-col{z-index: 3}
+/* explicit widths for pinned columns */
+th.col-select, td.col-select{min-width:var(--pin0); width:var(--pin0); left:0}
+th.col-index, td.col-index{min-width:var(--pin1); width:var(--pin1); left:calc(var(--pin0))}
+th.col-name, td.col-name{min-width:var(--pin2); width:var(--pin2); left:calc(var(--pin0) + var(--pin1))}
+th.col-empid, td.col-empid{min-width:var(--pin3); width:var(--pin3); left:calc(var(--pin0) + var(--pin1) + var(--pin2))}
+th.col-pemail, td.col-pemail{min-width:var(--pin4); width:var(--pin4); left:calc(var(--pin0) + var(--pin1) + var(--pin2) + var(--pin3)); box-shadow: 6px 0 12px rgba(0,0,0,.08)}
+/* Keep hover background consistent under sticky cells */
+tr:hover td.sticky-col{background:rgba(34,197,94,.15)}
+/* Prevent sticky overlap below header row */
+thead th.sticky-col{top:0}
+
+/* v35: Unpin columns */
+th.sticky-col, td.sticky-col{position: static !important; left:auto !important; box-shadow:none !important; z-index:auto !important}
+
+.btn.primary:hover{background:#22d466;border-color:#16a34a}
+
+.btn.danger:hover{background:#f05252;border-color:#ef4444}
+
+.qbtn:hover{background:#162032;border-color:#445672}
+
+.tab:hover{background:#162032;border-color:#445672}
+
+.btn:focus-visible,.qbtn:focus-visible,.tab:focus-visible{outline:2px solid #22c55e; outline-offset:2px}
+
+input[type="text"],input[type="password"],input[type="email"],input[type="date"],input[type="search"],input[type="tel"],input[type="month"],input[type="number"]{
+  width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--stroke);background:#ffffff;color:var(--text);outline:none;
+}
+input:focus{border-color:#86efac; box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+label{display:block;font-size:14px;margin:8px 0 4px}
+.hint{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+
+.btn:focus-visible{outline:2px solid #86efac; outline-offset:2px}
+
+.form-panels{display:flex;flex-direction:column;gap:14px}
+.panel{background:#ffffff;border:1px solid var(--stroke);border-radius:14px;padding:14px}
+.panel > legend{padding:0 6px;font-weight:600;color:#0f172a}
+.grid.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:800px){ .grid.two{grid-template-columns:1fr} }
+.form-actions{display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:linear-gradient(180deg, rgba(255,255,255,.6), #ffffff);backdrop-filter:saturate(1.2) blur(2px);border-top:1px solid var(--stroke);padding:10px;border-radius:12px}
+
+
+/* === v39 Monochrome + Teal Theme ======================================= */
+:root{
+  --topbar-h:64px;
+  --bg:#134e4a;              /* dark teal-green, still dark for white text */
+  --card:#17635e;            /* slightly lighter for cards */
+  --text:#ffffff;            /* keep text white for readability */
+  --muted:#cfd8dc;           /* soft off-white for hints, still readable */
+  --stroke:#1f6b66;          /* borders, slightly brighter for contrast */
+  --primary:#1dd1a1;         /* brighter teal for buttons */
+  --primary-700:#16a085;     /* darker teal for hover */
+}
+
+
+html,body{background:var(--bg) !important; color:var(--text) !important;}
+
+/* Header */
+.topbar{
+  background:var(--bg) !important;
+  border-bottom:1px solid var(--stroke) !important;
+  color:var(--text) !important;
+}
+
+/* Containers */
+.card, .modal-card, .table-wrap, .offer, .payslip{
+  background:var(--card) !important;
+  border-color:var(--stroke) !important;
+  color:var(--text) !important;
+  box-shadow: none !important;
+}
+
+/* Inputs */
+input[type="text"],input[type="password"],input[type="email"],input[type="date"],input[type="search"],input[type="tel"],input[type="month"],input[type="number"]{
+  background:#0c4542 !important; color:var(--text) !important; border:1px solid var(--stroke) !important;
+}
+input::placeholder{color:rgba(255,255,255,.65)}
+input:focus{border-color:var(--primary) !important; box-shadow:0 0 0 3px rgba(20,184,166,.25) !important}
+
+/* Buttons */
+.btn{background:transparent !important; color:var(--text) !important; border:1px solid rgba(255,255,255,.35) !important}
+.btn:hover{background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.55) !important}
+.btn.primary{background:var(--primary) !important; color:#001a19 !important; border-color:var(--primary-700) !important; font-weight:800}
+.btn.primary:hover{background:var(--primary-700) !important; border-color:var(--primary) !important}
+.btn.danger{background:transparent !important; border-color:rgba(255,255,255,.5) !important; color:var(--text) !important}
+
+/* Tables */
+th{background:#0a3836 !important; color:var(--text) !important; border-bottom:1px solid var(--stroke) !important}
+tr:hover{background:rgba(20,184,166,.12) !important}
+
+/* Chips (uncolored, minimal) */
+.status-chip{background:transparent !important; color:var(--text) !important; border:1px solid rgba(255,255,255,.35) !important}
+
+/* Tabs & queue chips */
+.tab{background:#0c4542 !important; border:1px solid var(--stroke) !important; color:var(--text) !important}
+.tab.active{background:#0a3836 !important; border-color:var(--primary) !important}
+.tab:hover{background:#0a3836 !important; border-color:var(--primary) !important}
+.qbtn{background:#0c4542 !important; border:1px solid var(--stroke) !important; color:var(--text) !important}
+.qbtn.active{background:var(--primary) !important; color:#001a19 !important; border-color:var(--primary-700) !important; font-weight:800}
+.qbtn:hover{background:#0a3836 !important; border-color:var(--primary) !important}
+
+/* Badges */
+.badge{background:#0c4542 !important; border:1px solid var(--stroke) !important; color:var(--text) !important}
+
+/* Modal backdrop */
+.modal{background:rgba(1,19,18,.6) !important}
+
+/* Form panels */
+.panel{background:#0c4542 !important; border:1px solid var(--stroke) !important}
+.panel > legend{color:#f8fafc !important}
+
+/* Sticky actions */
+.form-actions{background:linear-gradient(180deg, rgba(11,61,59,.4), rgba(11,61,59,1)) !important; border-top:1px solid var(--stroke) !important}
+
+.table-container {
+  max-height: 400px;   /* adjust scrollable area height */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+.table-container table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table-container th, 
+.table-container td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb; /* light gray background */
+  z-index: 2;
+}
+.table-container {
+  max-height: 450px;   /* scroll area */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  z-index: 2;
+}
+.employee-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.employee-card h4 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.employee-card p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+@media print {
+  img { max-height:60px; }
+}
+
+/* Common button style */
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+    color: #fff;
+}
+
+/* View button */
+.view-btn {
+    background-color: #3498db; /* Blue */
+}
+.view-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Edit button */
+.edit-btn {
+    background-color: #f1c40f; /* Yellow */
+    color: #000;
+}
+.edit-btn:hover {
+    background-color: #d4ac0d;
+}
+
+/* Delete button */
+.delete-btn {
+    background-color: #e74c3c; /* Red */
+}
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Common button style */
+.btn, .view-btn, .delete-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 20px; /* pill shape */
+    font-size: 14px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px; /* space between icon and text */
+    font-weight: 500;
+}
+
+/* View button */
+.view-btn {
+    background-color: #3498db; /* Blue */
+    color: #fff;
+}
+.view-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Edit button (using data-act="edit") */
+.btn[data-act="edit"] {
+    background-color: #f1c40f; /* Yellow */
+    color: #000;
+}
+.btn[data-act="edit"]:hover {
+    background-color: #d4ac0d;
+}
+
+/* Delete button */
+.delete-btn {
+    background-color: #e74c3c; /* Red */
+    color: #fff;
+}
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+
+

@@ -1,0 +1,23 @@
+name,empId,personalEmail,officialEmail,joiningDate,dob,salary,exitDate,bloodGroup,personalPhone,emergencyContact,accountNumber,ifsc,pan,aadhar,status,wotAllowance
+Sathya Prakash B,PLA0001,armysathya.25@gmail.com,sathyaprakash@platoontitleservices.com,3/7/2023,1/25/1994,50000,,A+ve,7845044010,8608399488,154801504321 ,,FVBPS8439C,952175473788 ,Active,TRUE
+Saravanan R,PLA0002,saravanarajan4@gmail.com,saravana@platoontitleservices.com,9/12/2023,4/7/1994,,,B+ve,8248316541,8438485551,10035168903 ,,GDSPS6199P,808563389954 ,Active,TRUE
+Deepak Paul Prassana J,PLA0003,deepak.prassana@gmail.com,paul@platoontitleservices.com,7/13/2022,2/27/1988,,,O+ve,9894194594,9494866415,730701500199 ,,BPVPD2414L,717511519476 ,Active,TRUE
+Sunil S,PLA0004,sunil.john1214@gmail.com,John.Tyler@platoontitleservices.com,7/13/2022,7/12/1990,,,A+ve,8056566997,7708708918,058701514773,,DKVPS4593G,723445970983 ,Active,TRUE
+Sathish R,PLA0005,rsathishmail1@gmail.com,Steve.R@platoontitleservices.com,7/13/2022,4/12/1991,,,B+ve,9597057997,9597009467,036001539192,,FWAPS6079A,488295994554 ,Active,TRUE
+Deepa V,PLA0014,deepavid1998@gmail.com,deepa.v@platoontitleservices.com,5/20/2024,3/1/1998,,,,9042012644,9344946554,218901509747 ,,GWLPD3081H,304319357307 ,Inactive,FALSE
+Nandhini K,PLA0015,nandhu531999@gmail.com,Nandhini.K@platoontitleservices.com,6/3/2024,3/5/1999,,,,6380876783,,433201501785 ,,BFIPN0344G,513169222029 ,Active,TRUE
+Dinesh B,PLA0020,dhineshraina212@gmail.com,Dinesh.B@platoontitleservices.com,7/3/2024,6/2/1999,,,,9994373255,9865546766,50100610855859 ,HDFC0001281,DYXPD0459N,866346527483 ,Active,TRUE
+Aravind K,PLA0023,aravindkathir21@gmail.com,Aravind.Kathirvel@platoontitleservices.com,7/22/2024,3/14/1997,,,B+ve,8838417098,8220596700,034201529116,ICIC0000342,HECPK7488M,958232040584 ,Active,TRUE
+Sakthi K,PLA0029,sakthikcsk@gmail.com,sakthi.k@platoontitleservices.com,9/13/2024,7/5/2000,,,A+ve,9080855040,9865441796,730701500800 ,,NXLPS7437A,337791896329 ,Active,TRUE
+Rahul  S,PLA0030,rahulsubramani222@gmail.com,rahul.s@platoontitleservices.com,9/16/2024,11/26/1997,,,B+ve,9597993868,9842924988,50100562957922 ,HDFC0001068,CAJPR8912F,527533985072 ,Active,TRUE
+Karan,PLA0036,karansubramani222@gmail.com,karan.s@platoontitleservices.com,1/20/2025,3/4/2001,,,B+ve,9597846274,8825902270,062391900001566,YESB0000623,HILPK0586B,554665880152 ,Active,TRUE
+Thangapandiyan G,PLA0038,thangapandiyan.gunasekaran@gmail.com,thangapandiyan.g@platoontitleservices.com,2/24/2025,1/6/1999,,,,9524862501,9514351824,12870100154501 ,FDRL0001287,CUOPG7478N,495446295653 ,Active,TRUE
+Hemapriya P,PLA0039,Hemapriyapanner18@gmail.com,Hemapriya.P@platoontitleservices.com,3/1/2025,10/18/1995,,,,7373905036,8220000973,433201501786 ,ICIC0004332,AIZPH2843R,945838889905 ,Active,TRUE
+Dinesh Mark J,PLA0043,dinesh.mark93@gmail.com,Dinesh.Mark@platoontitleservices.com,4/1/2025,10/20/1993,,,B+ve,9790704095,9894937441,7901000068813 ,IOBA0000079,BZPPJ3179J,524675822534 ,Active,TRUE
+Jeeva N,PLA0044,jeevamaxwell1@gmail.com,Jeeva.n@platoontitleservices.com,5/23/2025,2/20/2001,,,O+ve,9944824320,9944198679,159944824320 ,,CSBPN2921G,279726870257 ,Active,TRUE
+Hariharan K,PLA0045,harih117@gmail.com,Hariharan.K@platoontitleservices.com,7/25/2025,12/13/1992,,,O-ve,9003714131,9443033251,32984549689 ,SBIN0016384,AQFPH5118K,239686597231 ,Active,TRUE
+Prabhakaran G,PLA0046,martinprabhakaran2060@gmail.com,Prabhakaran.G@platoontitleservices.com,7/29/2025,6/20/2000,,,B+ve,6379068842,8489887916,184401000014242 ,IOBA0001844,GAEPP7580L,344194904438 ,Active,TRUE
+Sreenath S,PLA0048,javagilseenath6@gmail.com,,8/6/2025,3/15/2001,,,B+ve,8807401103,8489244713,10149085051 ,IDFB0080128,OHDPS9065K,254678147519 ,Active,TRUE
+ManiKandan R,PLA0049,chebobby77@gmail.com,,8/20/2025,6/4/2000,,,B+ve,6369775832,8056622887,77770131790145 ,FDRL0000001,FYKPM3813A,505396892770 ,Active,TRUE
+Madhankumar N,PLA0050,mathankumar6007@gmail.com,,8/20/2025,6/1/1998,,,A+ve,7010429787,8838125477,50100488019721 ,HDFC0009496,FNXPM3550A,731362020975 ,Active,TRUE
+Isac Danial S,PLA0051,btsdani420@gmail.com,,8/21/2025,12/7/1999,,,O+ve,9080165270,9159324172,20524940359 ,SBIN0013438,ALZPI4265K,394370347172 ,Inactive,FALSE

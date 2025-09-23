@@ -1,0 +1,16 @@
+[12-Sep-2025 19:08:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function db() in C:\xampp\htdocs\emp2\employee.php:14
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\emp2\employee.php on line 14
+[12-Sep-2025 19:11:51 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function db() in C:\xampp\htdocs\emp2\employee.php:14
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\emp2\employee.php on line 14
+[12-Sep-2025 19:14:23 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function db() in C:\xampp\htdocs\emp2\employee.php:14
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\emp2\employee.php on line 14
+[12-Sep-2025 19:16:15 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined method PDOStatement::fetch_all() in C:\xampp\htdocs\emp2\employee.php:100
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\emp2\employee.php on line 100
