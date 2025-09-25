@@ -6,6 +6,7 @@
 
   // Screens
   const SCREENS = { login: qs('#login-screen'), main: qs('#main-screen') };
+  
 
   // Elements
   const els = {
@@ -81,7 +82,21 @@
   function esc(s){ return (s ?? '').toString().replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function download(filename, text){ const blob=new Blob([text],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(a.href); a.remove(); }
   function downloadCsv(filename, rows){ if(!rows.length) return; const headers=Object.keys(rows[0]); const escv=v=>{const s=String(v??'').replace(/"/g,'""'); return /[",\n]/.test(s)?`"${s}"`:s;}; const lines=[headers.join(',')].concat(rows.map(r=>headers.map(h=>escv(r[h])).join(','))); const blob=new Blob([lines.join('\n')],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(a.href); a.remove(); }
+  async function loadEmployees() {
+  try {
+    const url = 'api.php?action=list&queue=' + encodeURIComponent(window.currentQueue);
+    console.log('Loading employees for queue:', window.currentQueue, url);
 
+    const res = await fetch(url);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Failed to load employees');
+    data = json.data;
+    renderEmployeeTable(data);
+  } catch (err) {
+    alert('Load failed: ' + err.message);
+    console.error(err);
+  }
+}
   // Salary breakup helper (no percentages shown in UI)
   function salaryBreakup(gross){
     let trans = 2000;
@@ -258,7 +273,326 @@ for(let d=1; d<=daysInMonth(ym); d++){
   // Format month name
   const ymLabel = new Date(ym+"-01").toLocaleDateString('en-US',{year:'numeric',month:'long'});
 
-  prev.innerHTML = `
+//   prev.innerHTML = `
+//   <div style="
+//       max-width:800px;
+//       margin:auto;
+//       font-family:Arial, Helvetica, sans-serif;
+//       background:#fff;
+//       color:#000000;    
+//       border:1px solid #ccc;
+//       border-radius:10px;
+//       padding:30px 40px;
+//       box-shadow:0 4px 12px rgba(0,0,0,0.1);
+//   ">
+
+//     <!-- Header with Logo -->
+//     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #000; padding-bottom:15px; margin-bottom:25px;">
+//       <div>
+//         <h2 style="margin:0; color:#00aaff; font-weight:700;">Platoon Title Services LLC</h2>
+//         <p style="margin:5px 0 0 0; font-size:14px; color:#555;">Employee Payslip – ${ymLabel}</p>
+//       </div>
+//       <div>
+//         <img src="logo.jpg" alt="Platoon Title Services" style="height:60px;">
+//       </div>
+//     </div>
+
+// <!-- Employee Details -->
+// <h3 style="margin:0 0 12px 0; color:#000; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px;">Employee Details</h3>
+// <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:15px; margin-bottom:25px;">
+//   <div><b>Employee Name:</b> ${esc(emp.name)}</div>
+//   <div><b>Employee ID:</b> ${esc(emp.empId)}</div>
+//   <div><b>Department:</b> ${esc(emp.department||'')}</div>
+//   <div><b>Bank A/C No:</b> ${esc(emp.accountNumber||'')}</div>
+//   <div><b>IFSC Code:</b> ${esc(emp.ifsc||'')}</div>
+//   <div><b>Base Salary (Prorated):</b> ₹ ${Math.round(grossBase).toLocaleString()}</div>
+// </div>
+
+
+//   <!-- Attendance Summary -->
+// <h3 style="margin:0 0 12px 0; color:#5555aa; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px;">
+//   Attendance Summary
+// </h3>
+// <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px;">
+//   <thead>
+//     <tr style="background:#f0f4ff; text-align:left;">
+//       <th style="padding:8px; border:1px solid #ccc;">Component</th>
+//       <th style="padding:8px; border:1px solid #ccc; text-align:right;">Days</th>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Total Working Days</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${w}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Day Shifts</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${dp}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Night Shifts</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${np}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Leave (Paid)</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${l}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Loss of Pay</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${lp}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Weekend Worked</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${weekendP}</td>
+//     </tr>
+//   </tbody>
+// </table>
+
+
+//     <!-- Earnings -->
+// <h3 style="margin:0 0 12px 0; color:#00aaff; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px;">
+//   Earnings Breakdown
+// </h3>
+// <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px;">
+//   <thead>
+//     <tr style="background:#f0f8ff; text-align:left;">
+//       <th style="padding:8px; border:1px solid #ccc;">Component</th>
+//       <th style="padding:8px; border:1px solid #ccc; text-align:right;">Amount (₹)</th>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Basic Pay</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${br.basic.toLocaleString()}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">HRA</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${br.hra.toLocaleString()}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Conveyance Allowance</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${br.conv.toLocaleString()}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Medical Allowance</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${br.med.toLocaleString()}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Special Allowance</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${br.special.toLocaleString()}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Transportation Allowance</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${br.trans.toLocaleString()}</td>
+//     </tr>
+//     <tr style="font-weight:bold; background:#f9f9f9;">
+//       <td style="padding:8px; border:1px solid #ccc;">Total Earnings (Prorated)</td>
+//       <td style="padding:8px; border:1px solid #ccc; text-align:right;">${br.total.toLocaleString()}</td>
+//     </tr>
+//   </tbody>
+// </table>
+
+
+//    <!-- Deductions -->
+// <h3 style="margin:0 0 12px 0; color:#ff5555; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px;">
+//   Deductions
+// </h3>
+// <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px;">
+//   <thead>
+//     <tr style="background:#ffe6e6; text-align:left;">
+//       <th style="padding:8px; border:1px solid #ccc;">Component</th>
+//       <th style="padding:8px; border:1px solid #ccc; text-align:right;">Amount (₹)</th>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Provident Fund (PF)</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${pf.toLocaleString()}</td>
+//     </tr>
+//   </tbody>
+// </table>
+
+// <!-- Additional Allowances -->
+// <h3 style="margin:0 0 12px 0; color:#00cc66; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px;">
+//   Additional Allowances
+// </h3>
+// <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px;">
+//   <thead>
+//     <tr style="background:#e6fff0; text-align:left;">
+//       <th style="padding:8px; border:1px solid #ccc;">Allowance</th>
+//       <th style="padding:8px; border:1px solid #ccc; text-align:right;">Amount (₹)</th>
+//     </tr>
+//   </thead>
+//   <tbody>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Night (Weekday) Allowance (₹${nightRate} × ${nightWeekdayCount})</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${nightAllowance.toLocaleString()}</td>
+//     </tr>
+//     <tr>
+//       <td style="padding:8px; border:1px solid #eee;">Weekend Allowance (₹${weekendRate} × ${weekendCount}, applied: ${wotAllowed ? "Yes" : "No"})</td>
+//       <td style="padding:8px; border:1px solid #eee; text-align:right;">${weekendAllowance.toLocaleString()}</td>
+//     </tr>
+//   </tbody>
+// </table>
+
+// <!-- Net Pay -->
+// <div style="margin-top:20px; padding-top:15px; border-top:3px solid #000; text-align:right; font-size:18px; font-weight:700;">
+//   Net Pay: ₹ ${net.toLocaleString()}
+// </div>
+
+
+//     <!-- Footer -->
+//     <div style="margin-top:25px; font-size:13px; text-align:center; color:#666;">
+//       LP = Loss of Pay • WO = Week Off • WOT = Weekend Present
+//     </div>
+//   </div>
+//   `;
+
+//   <div style="
+//       max-width:800px;
+//       margin:auto;
+//       font-family:Arial, Helvetica, sans-serif;
+//       background:#fff;
+//       color:#000000;    
+//       border:1px solid #ccc;
+//       border-radius:10px;
+//       padding:30px 40px;
+//       box-shadow:0 4px 12px rgba(0,0,0,0.1);
+//       page-break-inside: avoid;
+//   " class="payslip">
+
+//     <!-- Header with Logo -->
+//     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #000; padding-bottom:15px; margin-bottom:25px; page-break-inside: avoid;">
+//       <div>
+//         <h2 style="margin:0; color:#00aaff; font-weight:700;">Platoon Title Services LLC</h2>
+//         <p style="margin:5px 0 0 0; font-size:14px; color:#555;">Employee Payslip – ${ymLabel}</p>
+//       </div>
+//       <div>
+//         <img src="logo.jpg" alt="Platoon Title Services" style="height:60px;">
+//       </div>
+//     </div>
+
+//     <!-- Employee Details -->
+//     <h3 style="margin:0 0 12px 0; color:#000; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px; page-break-after: avoid;">
+//       Employee Details
+//     </h3>
+//     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:15px; margin-bottom:25px; page-break-inside: avoid;">
+//       <div><b>Employee Name:</b> ${esc(emp.name)}</div>
+//       <div><b>Employee ID:</b> ${esc(emp.empId)}</div>
+//       <div><b>Department:</b> ${esc(emp.department||'')}</div>
+//       <div><b>Bank A/C No:</b> ${esc(emp.accountNumber||'')}</div>
+//       <div><b>IFSC Code:</b> ${esc(emp.ifsc||'')}</div>
+//       <div><b>Base Salary (Prorated):</b> ₹ ${Math.round(grossBase).toLocaleString()}</div>
+//     </div>
+
+//     <!-- Attendance Summary -->
+//     <h3 style="margin:0 0 12px 0; color:#5555aa; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px; page-break-after: avoid;">
+//       Attendance Summary
+//     </h3>
+//     <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px; page-break-inside: avoid;">
+//       <thead>
+//         <tr style="background:#f0f4ff; text-align:left;">
+//           <th style="padding:8px; border:1px solid #ccc;">Component</th>
+//           <th style="padding:8px; border:1px solid #ccc; text-align:right;">Days</th>
+//         </tr>
+//       </thead>
+//       <tbody>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Total Working Days</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${w}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Day Shifts</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${dp}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Night Shifts</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${np}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Leave (Paid)</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${l}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Loss of Pay</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${lp}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Weekend Worked</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${weekendP}</td></tr>
+//       </tbody>
+//     </table>
+
+//     <!-- Earnings -->
+//     <h3 style="margin:0 0 12px 0; color:#00aaff; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px; page-break-after: avoid;">
+//       Earnings Breakdown
+//     </h3>
+//     <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px; page-break-inside: avoid;">
+//       <thead>
+//         <tr style="background:#f0f8ff; text-align:left;">
+//           <th style="padding:8px; border:1px solid #ccc;">Component</th>
+//           <th style="padding:8px; border:1px solid #ccc; text-align:right;">Amount (₹)</th>
+//         </tr>
+//       </thead>
+//       <tbody>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Basic Pay</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${br.basic.toLocaleString()}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">HRA</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${br.hra.toLocaleString()}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Conveyance Allowance</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${br.conv.toLocaleString()}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Medical Allowance</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${br.med.toLocaleString()}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Special Allowance</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${br.special.toLocaleString()}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Transportation Allowance</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${br.trans.toLocaleString()}</td></tr>
+//         <tr style="font-weight:bold; background:#f9f9f9;">
+//           <td style="padding:8px; border:1px solid #ccc;">Total Earnings (Prorated)</td>
+//           <td style="padding:8px; border:1px solid #ccc; text-align:right;">${br.total.toLocaleString()}</td>
+//         </tr>
+//       </tbody>
+//     </table>
+
+//     <!-- Deductions -->
+//     <h3 style="margin:0 0 12px 0; color:#ff5555; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px; page-break-after: avoid;">
+//       Deductions
+//     </h3>
+//     <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px; page-break-inside: avoid;">
+//       <thead>
+//         <tr style="background:#ffe6e6; text-align:left;">
+//           <th style="padding:8px; border:1px solid #ccc;">Component</th>
+//           <th style="padding:8px; border:1px solid #ccc; text-align:right;">Amount (₹)</th>
+//         </tr>
+//       </thead>
+//       <tbody>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Provident Fund (PF)</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${pf.toLocaleString()}</td></tr>
+//       </tbody>
+//     </table>
+
+//     <!-- Additional Allowances -->
+//     <h3 style="margin:0 0 12px 0; color:#00cc66; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px; page-break-after: avoid;">
+//       Additional Allowances
+//     </h3>
+//     <table style="width:100%; border-collapse:collapse; font-size:15px; margin-bottom:25px; page-break-inside: avoid;">
+//       <thead>
+//         <tr style="background:#e6fff0; text-align:left;">
+//           <th style="padding:8px; border:1px solid #ccc;">Allowance</th>
+//           <th style="padding:8px; border:1px solid #ccc; text-align:right;">Amount (₹)</th>
+//         </tr>
+//       </thead>
+//       <tbody>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Night (Weekday) Allowance (₹${nightRate} × ${nightWeekdayCount})</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${nightAllowance.toLocaleString()}</td></tr>
+//         <tr><td style="padding:8px; border:1px solid #eee;">Weekend Allowance (₹${weekendRate} × ${weekendCount}, applied: ${wotAllowed ? "Yes" : "No"})</td><td style="padding:8px; border:1px solid #eee; text-align:right;">${weekendAllowance.toLocaleString()}</td></tr>
+//       </tbody>
+//     </table>
+
+//     <!-- Net Pay -->
+//     <div style="margin-top:20px; padding-top:15px; border-top:3px solid #000; text-align:right; font-size:18px; font-weight:700; page-break-inside: avoid;">
+//       Net Pay: ₹ ${net.toLocaleString()}
+//     </div>
+
+//     <!-- Footer -->
+//     <div style="margin-top:25px; font-size:13px; text-align:center; color:#666; page-break-inside: avoid;">
+//       LP = Loss of Pay • WO = Week Off • WOT = Weekend Present
+//     </div>
+//   </div>
+
+//   <style>
+//     @media print {
+//       .payslip {
+//         page-break-inside: avoid;
+//         page-break-before: avoid;
+//         page-break-after: avoid;
+//       }
+//       table, tr, td, th, div, h3 {
+//         page-break-inside: avoid !important;
+//       }
+//       body {
+//         -webkit-print-color-adjust: exact;
+//         print-color-adjust: exact;
+//       }
+//     }
+//   </style>
+// `;
+prev.innerHTML = `
   <div style="
       max-width:800px;
       margin:auto;
@@ -287,9 +621,9 @@ for(let d=1; d<=daysInMonth(ym); d++){
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:15px; margin-bottom:25px;">
   <div><b>Employee Name:</b> ${esc(emp.name)}</div>
   <div><b>Employee ID:</b> ${esc(emp.empId)}</div>
-  <div><b>Department:</b> ${esc(emp.department||'')}</div>
-  <div><b>Bank A/C No:</b> ${esc(emp.accountNumber||'')}</div>
-  <div><b>IFSC Code:</b> ${esc(emp.ifsc||'')}</div>
+  <div><b>Department:</b> ${esc(emp.department || '')}</div>
+  <div><b>Bank A/C No:</b> ${esc(emp.accountNumber || '')}</div>
+  <div><b>IFSC Code:</b> ${esc(emp.ifsc || '')}</div>
   <div><b>Base Salary (Prorated):</b> ₹ ${Math.round(grossBase).toLocaleString()}</div>
 </div>
 
@@ -378,7 +712,7 @@ for(let d=1; d<=daysInMonth(ym); d++){
 </table>
 
 
-   <!-- Deductions -->
+    <!-- Deductions -->
 <h3 style="margin:0 0 12px 0; color:#ff5555; font-weight:700; border-bottom:1px solid #bbb; padding-bottom:6px;">
   Deductions
 </h3>
@@ -838,49 +1172,7 @@ Aadhar: ${emp.aadhar}
 
   updateSelectedCount();
 }
-
-
-
-
-//   // ..Queues
-// function bindQueueButtons() {
-//   const buttons = qsa('#queues .qbtn');
-//   if (!buttons.length) return;
-
-//   buttons.forEach(btn => {
-//     btn.addEventListener('click', () => {
-//       buttons.forEach(b => b.classList.remove('active'));
-//       btn.classList.add('active');
-
-//       // read from data-q attribute
-//       currentQueue = btn.getAttribute('data-q') || 'all';
-
-//       // reload with this queue
-//       loadEmployees();
-//     });
-//   });
-// }
-// --- put this near the top of your main script (or in a file loaded with defer) ---
 window.currentQueue = window.currentQueue || 'all'; // make sure it's defined globally
-
-// optional fallback if you use `qsa` helper elsewhere
-
-// loadEmployees uses the global currentQueue
-async function loadEmployees() {
-  try {
-    const url = 'api.php?action=list&queue=' + encodeURIComponent(window.currentQueue);
-    console.log('Loading employees for queue:', window.currentQueue, url);
-
-    const res = await fetch(url);
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.error || 'Failed to load employees');
-    data = json.data;
-    renderEmployeeTable(data);
-  } catch (err) {
-    alert('Load failed: ' + err.message);
-    console.error(err);
-  }
-}
 // Queues
 function bindQueueButtons() {
   const buttons = qsa('#queues .qbtn');
@@ -1534,80 +1826,6 @@ function renderEmployees(data) {
         container.appendChild(row);
     });
 }
-
-
-
-
-// async function loadEmployees() {
-//   try {
-//     const res = await fetch('api.php?action=list');
-//     const text = await res.text();
-//     let data;
-//     try {
-//       data = JSON.parse(text);
-//     } catch(e) {
-//       console.error("Invalid JSON response:", text);
-//       return;
-//     }
-//     if(data.ok) renderEmployees(data.data);
-//     else console.error(data.error);
-//   } catch(err) {
-//     console.error("Fetch failed:", err);
-//   }
-// }
-
-
-// function renderTable(data) {
-//   const tbody = document.querySelector('#emp-table tbody');
-//   tbody.innerHTML = '';
-//   data.forEach((row, i) => {
-//     const tr = document.createElement('tr');
-//     tr.innerHTML = `
-//       <td class="checkbox-col"><input type="checkbox" data-id="${row.id}"></td>
-//       <td>${i+1}</td>
-//       <td>${escapeHtml(row.name||'')}</td>
-//       <td>${escapeHtml(row.empId||'')}</td>
-//       <td>${escapeHtml(row.personalEmail||'')}</td>
-//       <td>${escapeHtml(row.officialEmail||'')}</td>
-//       <td>${escapeHtml(row.department||'')}</td>
-//       <td>${row.joiningDate || ''}</td>
-//       <td>${row.dob || ''}</td>
-//       <td>${row.salary || ''}</td>
-//       <td>${row.exitDate || ''}</td>
-//       <td>${calcTenureMonths(row.joiningDate, row.exitDate)}</td>
-//       <td>${escapeHtml(row.status||'')}</td>
-//       <td>${escapeHtml(row.bloodGroup||'')}</td>
-//       <td>${escapeHtml(row.personalPhone||'')}</td>
-//       <td>${escapeHtml(row.emergencyContact||'')}</td>
-//       <td>${escapeHtml(row.accountNumber||'')}</td>
-//       <td>${escapeHtml(row.ifsc||'')}</td>
-//       <td>${escapeHtml(row.pan||'')}</td>
-//       <td>${escapeHtml(row.aadhar||'')}</td>
-//       <td>
-//         <button class="btn small edit" data-id="${row.id}">Edit</button>
-//         <button class="btn small danger delete" data-id="${row.id}">Delete</button>
-//       </td>
-//     `;
-//     tbody.appendChild(tr);
-//   });
-
-//   // wire edit/delete buttons
-//   document.querySelectorAll('.edit').forEach(b => b.addEventListener('click', async e => {
-//     const id = e.currentTarget.dataset.id;
-//     const resp = await fetch(`${API_BASE}?action=get&id=${id}`);
-//     const json = await resp.json();
-//     if (json.ok) openEditModal(json.data);
-//   }));
-//   document.querySelectorAll('.delete').forEach(b => b.addEventListener('click', async e => {
-//     const id = e.currentTarget.dataset.id;
-//     if (!confirm('Delete employee #' + id + '?')) return;
-//     const form = new FormData();
-//     form.append('id', id);
-//     const res = await apiFetch('delete', 'POST', form);
-//     if (res.ok) loadEmployees();
-//   }));
-// }
-
 function escapeHtml(s) {
   if (!s) return '';
   return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]); });
@@ -1788,36 +2006,6 @@ function renderEmployeeTable(employees) {
         `;
         tbody.appendChild(tr);
     });
-
-    // Add event listeners for view buttons
-//     document.querySelectorAll('.view-btn').forEach(btn => {
-//         btn.addEventListener('click', () => {
-//             const emp = employees.find(e => e.id == btn.dataset.id);
-//             if (!emp) return alert('Employee not found');
-
-//             const details = `
-// Name: ${emp.name}
-// Employee ID: ${emp.emp_id || emp.empId}
-// Department: ${emp.department}
-// Personal Email: ${emp.personal_email || emp.personalEmail}
-// Official Email: ${emp.official_email || emp.officialEmail}
-// Blood Group: ${emp.blood_group || emp.bloodGroup}
-// Personal Phone: ${emp.personal_phone || emp.personalPhone}
-// Emergency Contact: ${emp.emergency_contact || emp.emergencyContact}
-// Joining Date: ${emp.joining_date || emp.joiningDate}
-// DOB: ${emp.dob}
-// Salary: ₹${emp.salary}
-// Exit Date: ${emp.exit_date || emp.exitDate}
-// Tenure: ${emp.tenure}
-// Status: ${emp.status}
-// Account #: ${emp.account_number || emp.accountNumber}
-// IFSC: ${emp.ifsc}
-// PAN: ${emp.pan}
-// Aadhar: ${emp.aadhar}
-//             `;
-//             alert(details);
-//         });
-//     });
 // 1️⃣ Dynamically load SweetAlert2
 const script = document.createElement('script');
 script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
@@ -1830,24 +2018,33 @@ script.onload = () => {
 
             Swal.fire({
                 title: `${emp.name} (${emp.emp_id || emp.empId})`,
-                html: `
-                    <b>Department:</b> ${emp.department}<br>
-                    <b>Personal Email:</b> ${emp.personal_email || emp.personalEmail}<br>
-                    <b>Official Email:</b> ${emp.official_email || emp.officialEmail}<br>
-                    <b>Blood Group:</b> ${emp.blood_group || emp.bloodGroup}<br>
-                    <b>Personal Phone:</b> ${emp.personal_phone || emp.personalPhone}<br>
-                    <b>Emergency Contact:</b> ${emp.emergency_contact || emp.emergencyContact}<br>
-                    <b>Joining Date:</b> ${emp.joining_date || emp.joiningDate}<br>
-                    <b>DOB:</b> ${emp.dob}<br>
-                    <b>Salary:</b> ₹${emp.salary}<br>
-                    <b>Exit Date:</b> ${emp.exit_date || emp.exitDate}<br>
-                    <b>Tenure:</b> ${emp.tenure}<br>
-                    <b>Status:</b> ${emp.status}<br>
-                    <b>Account #:</b> ${emp.account_number || emp.accountNumber}<br>
-                    <b>IFSC:</b> ${emp.ifsc}<br>
-                    <b>PAN:</b> ${emp.pan}<br>
-                    <b>Aadhar:</b> ${emp.aadhar}
-                `,
+              html: `
+  <div style="
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 6px 12px;
+    text-align: left;
+    line-height: 1.6;
+    font-size: 15px;
+  ">
+    <div>🏢 <b>Department :</b></div>        <div>${emp.department}</div>
+    <div>📧 <b>Personal Email :</b></div>   <div>${emp.personal_email || emp.personalEmail}</div>
+    <div>💼 <b>Official Email :</b></div>   <div>${emp.official_email || emp.officialEmail}</div>
+    <div>🩸 <b>Blood Group :</b></div>      <div>${emp.blood_group || emp.bloodGroup}</div>
+    <div>📱 <b>Personal Phone :</b></div>   <div>${emp.personal_phone || emp.personalPhone}</div>
+    <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact}</div>
+    <div>🗓️ <b>Joining Date :</b></div>    <div>${emp.joining_date || emp.joiningDate}</div>
+    <div>🎂 <b>DOB :</b></div>              <div>${emp.dob}</div>
+    <div>💰 <b>Salary :</b></div>           <div>₹${emp.salary}</div>
+    <div>🚪 <b>Exit Date :</b></div>        <div>${emp.exit_date || emp.exitDate}</div>
+    <div>⏳ <b>Tenure :</b></div>           <div>${emp.tenure}</div>
+    <div>✅ <b>Status :</b></div>           <div>${emp.status}</div>
+    <div>🏦 <b>Account :</b></div>        <div>${emp.account_number || emp.accountNumber}</div>
+    <div>🏧 <b>IFSC :</b></div>             <div>${emp.ifsc}</div>
+    <div>🆔 <b>PAN :</b></div>              <div>${emp.pan}</div>
+    <div>🪪 <b>Aadhar :</b></div>           <div>${emp.aadhar}</div>
+  </div>
+`,
                 icon: 'info',
                 confirmButtonText: 'Close'
             });
@@ -1857,56 +2054,182 @@ script.onload = () => {
 document.head.appendChild(script);
 
 
-    // Add event listeners for edit buttons
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
-    });
+    // // Add event listeners for edit buttons
+    // document.querySelectorAll('.edit-btn').forEach(btn => {
+    //     btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
+    // });
+    document.querySelectorAll('[data-act="edit"]').forEach(btn => {
+    btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
+});
+
 
     // Add event listeners for delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
     });
+
 }
+// ✅ Run this ONCE after page load
+document.addEventListener('DOMContentLoaded', () => {
+    const selectAll = document.getElementById('select-all');
+    const deleteSelectedBtn = document.getElementById('btn-delete-selected');
+
+    function toggleDeleteButton() {
+        deleteSelectedBtn.disabled =
+            document.querySelectorAll('.select-emp:checked').length === 0;
+    }
+
+    // Toggle all checkboxes
+    selectAll.addEventListener('change', () => {
+        document.querySelectorAll('.select-emp').forEach(chk => {
+            chk.checked = selectAll.checked;
+        });
+        toggleDeleteButton();
+    });
+
+    // Monitor individual checkboxes
+    document.addEventListener('change', e => {
+        if (e.target.classList.contains('select-emp')) {
+            const all = document.querySelectorAll('.select-emp');
+            const checked = document.querySelectorAll('.select-emp:checked');
+            selectAll.checked = all.length && checked.length === all.length;
+            toggleDeleteButton();
+        }
+    });
+
+    // Bulk Delete
+    deleteSelectedBtn.addEventListener('click', () => {
+        const ids = [...document.querySelectorAll('.select-emp:checked')]
+            .map(chk => chk.dataset.id);
+
+        if (!ids.length) return;
+
+        Swal.fire({
+            title: 'Delete Selected?',
+            html: `Delete <b>${ids.length}</b> employee(s)?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete'
+        }).then(res => {
+            if (res.isConfirmed) {
+                ids.forEach(id => deleteEmployee(id)); // your existing function
+                Swal.fire('Deleted!', 'Selected employees removed.', 'success');
+            }
+        });
+    });
+});
+
+// function renderEmployeeTable(employees) {
+//     const tbody = document.getElementById('employee-table-body');
+//     if (!tbody) return;
+
+//     tbody.innerHTML = ''; // clear existing rows
+//     const today = new Date(); // ✅ needed for probation calculation
+
+//     employees.forEach((emp, index) => {
+//         // ✅ Probation logic
+//         let status = emp.status || '';
+//         const joinDate = new Date(emp.joining_date || emp.joiningDate || '');
+//         const exitDate = emp.exit_date || emp.exitDate || '';
+//         if (!isNaN(joinDate) && !exitDate) {
+//             const diffDays = Math.floor((today - joinDate) / (1000 * 60 * 60 * 24));
+//             if (diffDays <= 90 && status.toLowerCase() !== 'inactive') {
+//                 status = 'Probation';
+//             }
+//         }
+
+//         const tr = document.createElement('tr');
+//         tr.innerHTML = `
+//             <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
+//             <td>${index + 1}</td>
+//             <td>${emp.name || ''}</td>
+//             <td>${emp.emp_id || emp.empId || ''}</td>
+//             <td>${emp.personal_email || emp.personalEmail || ''}</td>
+//             <td>${emp.official_email || emp.officialEmail || ''}</td>
+//             <td>${emp.department || ''}</td>
+//             <td>${emp.joining_date || emp.joiningDate || ''}</td>
+//             <td>${emp.dob || ''}</td>
+//             <td>${emp.salary || ''}</td>
+//             <td>${emp.exit_date || emp.exitDate || ''}</td>
+//             <td>${emp.tenure || ''}</td>
+//             <td>${status}</td> <!-- ✅ updated Status -->
+//             <td>${emp.blood_group || emp.bloodGroup || ''}</td>
+//             <td>${emp.personal_phone || emp.personalPhone || ''}</td>
+//             <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
+//             <td>${emp.account_number || emp.accountNumber || ''}</td>
+//             <td>${emp.ifsc || ''}</td>
+//             <td>${emp.pan || ''}</td>
+//             <td>${emp.aadhar || ''}</td>
+//           <td>
+//             <button class="view-btn" data-id="${emp.id}">👁️ View</button>
+//             <button class="btn" data-act="edit" data-id="${emp.id}">✏️ Edit</button>
+//             <button class="delete-btn" data-id="${emp.emp_id || emp.empId || ''}">🗑️ Delete</button>
+//           </td>
+//         `;
+//         tbody.appendChild(tr);
+//     });
+
+//     // SweetAlert2
+//     const script = document.createElement('script');
+//     script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+//     script.onload = () => {
+//         document.querySelectorAll('.view-btn').forEach(btn => {
+//             btn.addEventListener('click', () => {
+//                 const emp = employees.find(e => e.id == btn.dataset.id);
+//                 if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+//                 Swal.fire({
+//     title: `${emp.name} (${emp.emp_id || emp.empId})`,
+//     html: `
+//         <strong>Department:</strong> ${emp.department}<br>
+//         <strong>Personal Email:</strong> ${emp.personal_email || emp.personalEmail}<br>
+//         <strong>Official Email:</strong> ${emp.official_email || emp.officialEmail}<br>
+//         <strong>Blood Group:</strong> ${emp.blood_group || emp.bloodGroup}<br>
+//         <strong>Personal Phone:</strong> ${emp.personal_phone || emp.personalPhone}<br>
+//         <strong>Emergency Contact:</strong> ${emp.emergency_contact || emp.emergencyContact}<br>
+//         <strong>Joining Date:</strong> ${emp.joining_date || emp.joiningDate}<br>
+//         <strong>DOB:</strong> ${emp.dob}<br>
+//         <strong>Salary:</strong> ₹${emp.salary}<br>
+//         <strong>Exit Date:</strong> ${emp.exit_date || emp.exitDate}<br>
+//         <strong>Tenure:</strong> ${emp.tenure}<br>
+//         <strong>Status:</strong> ${status}<br>
+//         <strong>Account #:</strong> ${emp.account_number || emp.accountNumber}<br>
+//         <strong>IFSC:</strong> ${emp.ifsc}<br>
+//         <strong>PAN:</strong> ${emp.pan}<br>
+//         <strong>Aadhar:</strong> ${emp.aadhar}
+//     `,
+//     icon: 'info',
+//     confirmButtonText: 'Close'
+// });
+
+//             });
+//         });
+//     };
+//     document.head.appendChild(script);
+
+//     // Edit & Delete
+//     document.querySelectorAll('.edit-btn').forEach(btn => {
+//         btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
+//     });
+//     document.querySelectorAll('.delete-btn').forEach(btn => {
+//         btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
+//     });
+// }
+// Main render function
+
+
+// Add search listener
+// document.getElementById('employee-search').addEventListener('input', () => {
+//     // Call render function again to filter
+//     renderEmployeeTable(employees);
+// });
+
+
+
 
 let editingId = null; // Global DB id
 
-// function openEditModal(emp) {
-//   editingId = emp.id; // hold DB id for update
 
-//   // Identity
-//   qs("#modal-name").value = emp.name || "";
-//   qs("#modal-employee-id").value = emp.empId || "";
-//   qs("#modal-department").value = emp.department || "";
-//   qs("#modal-blood-group").value = emp.bloodGroup || "";
-
-//   // Contacts
-//   qs("#modal-personal-email").value = emp.personalEmail || "";
-//   qs("#modal-official-email").value = emp.officialEmail || "";
-//   qs("#modal-personal-contact").value = emp.personalPhone || "";
-//   qs("#modal-emergency-contact").value = emp.emergencyContact || "";
-
-//   // Employment
-//   qs("#modal-joining-date").value = emp.joiningDate || "";
-//   qs("#modal-dob").value = emp.dob || "";
-//   qs("#modal-salary").value = emp.salary || 0;
-//   qs("#modal-exit-date").value = emp.exitDate || "";
-//   qs("#modal-tenure").value = emp.tenure || "";
-//   qs("#modal-status").value = emp.status || "";
-//   qs("#modal-wotAllowance").checked = emp.wotAllowance == 1;
-
-//   // Banking
-//   qs("#modal-accountNumber").value = emp.accountNumber || "";
-//   qs("#modal-ifsc").value = emp.ifsc || "";
-
-//   // IDs
-//   qs("#modal-pan").value = emp.pan || "";
-//   qs("#modal-aadhar").value = emp.aadhar || "";
-
-//   // Show modal
-//   qs("#modal-title").textContent = "Edit Employee";
-//   qs("#modal").classList.remove("hidden");
-//   document.body.classList.add("modal-open");
-// }
 
 
 // --- Tab Handling ---

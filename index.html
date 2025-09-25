@@ -6,65 +6,122 @@
   <title>Platoon Title Services — Employee Tracker (Offline)</title>
   <link rel="stylesheet" href="style.v39.css"/>
 </head>
+<head>
+  ...
+  <!-- ✅ Font Awesome for Smooth Stylish Icons -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-SzlrxWriC3zFZ7z8kA1F1Ug1vB+O9QJkVVU5lHQlI2zFeoJ6hM7bO1L+DYzO7hZaK0rFV0yZ5xWb46C5z8+g3g=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+</head>
+
 <body>
   <!-- Login Screen -->
-  <section id="login-screen" class="screen active">
-    <div class="card w-400">
-      <div class="brand" style="margin-bottom:12px">
-        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" aria-label="Platoon Title Services">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#0ea5a4"/></linearGradient></defs>
-  <rect x="10" y="10" width="140" height="140" rx="28" fill="url(#g)"/>
-  <g fill="#ffffff" font-family="Inter, ui-sans-serif, system-ui" font-weight="800">
-    <text x="32" y="86" font-size="64">PT</text>
-    <text x="32" y="126" font-size="52">S</text>
-  </g>
-  <title>Platoon Title Services</title>
-</svg>
-        <div>
-          <div class="title">Employee Tracker</div>
-          <div class="subtitle">Platoon Title Services</div>
-        </div>
+ <section id="login-screen" class="screen active">
+  <div class="card w-400">
+    <div class="brand" style="
+         margin-bottom:16px;
+         display:flex;
+         flex-direction:column;
+         align-items:center;
+         gap:12px;">
+      <!-- Medium photo -->
+      <img src="logo.jpg"
+           alt="Platoon Title Services"
+           style="
+             width:200px;      /* medium width */
+             max-width:90%;    /* responsive */
+             height:auto;
+             border-radius:8px; /* optional rounded corners */
+             object-fit:cover;">
+      
+      <div style="text-align:center;">
+        <div class="title">Employee Tracker</div>
+        <div class="subtitle">Platoon Title Services</div>
       </div>
-      <form id="login-form">
-        <label>Username
-          <input id="login-username" type="text" autocomplete="username" required/>
-        </label>
-        <label>Password
-          <input id="login-password" type="password" autocomplete="current-password" required/>
-        </label>
-        <button class="btn primary w-100" type="submit">Login</button>
-      </form>
     </div>
-  </section>
+
+    <form id="login-form">
+      <label>Username
+        <input id="login-username" type="text" autocomplete="username" required>
+      </label>
+      <label>Password
+        <input id="login-password" type="password" autocomplete="current-password" required>
+      </label>
+      <div style="text-align:center ;">
+  <button class="btn primary w-50 mt-3" type="submit">Login</button>
+</div>
+    </form>
+  </div>
+</section>
+
+
 
   <!-- Main Screen -->
   <section id="main-screen" class="screen">
-    <header class="topbar">
-      <div class="brand">
-        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" aria-label="Platoon Title Services">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#0ea5a4"/></linearGradient></defs>
-  <rect x="10" y="10" width="140" height="140" rx="28" fill="url(#g)"/>
-  <g fill="#ffffff" font-family="Inter, ui-sans-serif, system-ui" font-weight="800">
-    <text x="32" y="86" font-size="64">PT</text>
-    <text x="32" y="126" font-size="52">S</text>
-  </g>
-  <title>Platoon Title Services</title>
-</svg>
-        <div>
-          <div class="title">Platoon Title Services</div>
-          <div class="subtitle">Employee Tracker</div>
-        </div>
-      </div>
-      <div class="right">
-        <button id="btn-logout" class="btn danger">Logout</button>
-      </div>
-    </header>
+   <header class="topbar">
+  <div class="brand" style="display:flex; align-items:center; gap:16px;">
+  <!-- Clickable Logo -->
+  <a href="index.html" style="display:inline-block;">
+    <img src="logo.jpg"  
+         alt="Platoon Title Services"
+         style="
+           width:120px;        /* medium size */
+           max-width:90%;      /* responsive on small screens */
+           height:auto;
+           object-fit:contain;
+           display:block;
+           cursor:pointer;">
+  </a>
+
+  <!-- Title and Subtitle -->
+  <div>
+<div class="title" style="
+    font-weight:600;
+    font-size:20px;
+    background: linear-gradient(to right, #87CEEB, #ffffff); /* Skyblue to white */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+">Platoon Title Services</div>
+
+<div class="subtitle" style="
+    font-size:14px;
+    background: linear-gradient(to right, #87CEEB, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+">Employee Tracker</div>
+
+  </div>
+</div>
+
+
+  <div class="right">
+    <!-- <button id="btn-logout" class="btn danger">Logout</button> -->
+     <button id="btn-logout" class="btn danger" 
+    style="background: linear-gradient(90deg, #ff4b2b, #ff416c);
+           color: white;
+           border: none;
+           padding: 10px 20px;
+           border-radius: 8px;
+           font-weight: bold;
+           cursor: pointer;
+           transition: 0.3s;"
+    onmouseover="this.style.background='linear-gradient(90deg, #ff416c, #ff4b2b)';"
+    onmouseout="this.style.background='linear-gradient(90deg, #ff4b2b, #ff416c)';">
+    Logout
+</button>
+
+  </div>
+</header>
+
 
     <main class="container">
       <div class="actions-bar">
         <button id="btn-add" class="btn">Add Employee</button>
-        <button id="btn-delete-selected" class="btn danger">Delete Selected</button>
-        <span id="selected-count" class="badge">0</span>
+        <!-- <button id="btn-delete-selected" class="btn danger">Delete Selected</button> -->
+         <!-- <button id="btn-delete-selected" class="btn danger" disabled>Delete Selected</button> -->
+        <!-- <span id="selected-count" class="badge">0</span> -->
         <button id="btn-bulk-import" class="btn">Bulk Import</button>
         <button id="btn-export" class="btn">Export JSON</button>
         <button id="btn-export-csv" class="btn">Export CSV</button>
@@ -84,28 +141,7 @@
         <button class="qbtn" data-q="probation">Probation (≤ 3 mo) </button>
       </div>
 <div id="employee-list"></div>
-<!-- <td><button class="btn" data-act="edit" data-id="${r.id}">Edit</button></td> -->
-<script>
-  // After you generate rowsHtml...
-els.tableBody.innerHTML = rowsHtml || `<tr><td colspan="21" class="muted" style="text-align:center;padding:16px">No employees yet.</td></tr>`;
-
-// 👉 Also render into #employee-list
-const listHtml = filtered.map(r => {
-  return `
-    <div class="employee-card">
-      <h4>${esc(r.name)} (${esc(r.empId)})</h4>
-      <p><b>Department:</b> ${esc(r.department||'')}</p>
-      <p><b>Email:</b> ${esc(r.officialEmail||'')}</p>
-      <button class="btn" data-act="edit" data-id="${r.id}">Edit</button>
-    </div>
-  `;
-}).join('');
-
-document.getElementById("employee-list").innerHTML = listHtml;
-
-</script>
-
-      <table id="emp-table">
+<table id="emp-table">
   <thead>
     <tr>
       <th class="checkbox-col"><input type="checkbox" id="select-all" title="Select All"/></th>
@@ -133,7 +169,6 @@ document.getElementById("employee-list").innerHTML = listHtml;
   </thead>
   <tbody id="employee-table-body"></tbody>
 </table>
-
     </main>
   </section>
 
@@ -142,7 +177,8 @@ document.getElementById("employee-list").innerHTML = listHtml;
     <div class="modal-card">
       <div class="modal-header">
         <h3 id="modal-title">Add Employee</h3>
-        <button id="modal-close" class="icon-btn">✕</button>
+        <!-- <button id="modal-close" class="icon-btn">✕</button> -->
+        <button id="modal-close" class="icon-btn" style="color: white; background: transparent; border: none; font-size: 20px; cursor: pointer;">✕</button>
       </div>
       <div class="modal-body">
         <div class="tabs">
@@ -316,7 +352,8 @@ document.getElementById("employee-list").innerHTML = listHtml;
     <div class="modal-card">
       <div class="modal-header">
         <h3>Settings</h3>
-        <button id="settings-close" class="icon-btn">✕</button>
+        <!-- <button id="settings-close" class="icon-btn">✕</button> -->
+          <button id="settings-close" class="icon-btn" style="color: white; background: transparent; border: none; font-size: 20px; cursor: pointer;">✕</button>
       </div>
       <div class="modal-body">
         <form id="settings-form" class="grid">
@@ -327,7 +364,7 @@ document.getElementById("employee-list").innerHTML = listHtml;
             <input name="username" placeholder="admin">
           </label>
           <label>Password
-            <input type="password" name="password" placeholder="admin">
+            <input type="password" name="password">
           </label>
           <label>PF %
             <input type="number" name="pfPct" step="0.1" min="0" max="100" placeholder="12">
