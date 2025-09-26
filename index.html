@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.v39.css"/>
 </head>
 <head>
-  ...
   <!-- ✅ Font Awesome for Smooth Stylish Icons -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -141,34 +140,41 @@
         <button class="qbtn" data-q="probation">Probation (≤ 3 mo) </button>
       </div>
 <div id="employee-list"></div>
-<table id="emp-table">
-  <thead>
-    <tr>
-      <th class="checkbox-col"><input type="checkbox" id="select-all" title="Select All"/></th>
-      <th>#</th>
-      <th>Name</th>
-      <th>Employee ID</th>
-      <th>Personal Email</th>
-      <th>Official Email</th>
-      <th>Department</th>
-      <th>Joining Date</th>
-      <th>DOB</th>
-      <th>Salary (₹/mo)</th>
-      <th>Exit Date</th>
-      <th>Tenure (months)</th>
-      <th>Status</th>
-      <th>Blood Group</th>
-      <th>Personal Phone</th>
-      <th>Emergency Contact</th>
-      <th>Account #</th>
-      <th>IFSC</th>
-      <th>PAN</th>
-      <th>Aadhar</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="employee-table-body"></tbody>
-</table>
+<!-- ✅ Employee Table -->
+<div class="table-container">
+  <table id="emp-table" class="emp-table">
+    <thead>
+      <tr>
+        <th class="checkbox-col"><input type="checkbox" id="select-all" title="Select All"/></th>
+        <th>#</th>
+        <th>Name</th>
+        <th>Employee ID</th>
+        <th>Personal Email</th>
+        <th>Official Email</th>
+        <th>Department</th>
+        <th>Joining Date</th>
+        <th>DOB</th>
+        <th>Salary (₹/mo)</th>
+        <th>Exit Date</th>
+        <th>Tenure (months)</th>
+        <th>Status</th>
+        <th>Blood Group</th>
+        <th>Personal Phone</th>
+        <th>Emergency Contact</th>
+        <th>Account #</th>
+        <th>IFSC</th>
+        <th>PAN</th>
+        <th>Aadhar</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="employee-table-body">
+      <!-- Data will be dynamically inserted -->
+    </tbody>
+  </table>
+</div>
+
+
     </main>
   </section>
 
@@ -178,7 +184,18 @@
       <div class="modal-header">
         <h3 id="modal-title">Add Employee</h3>
         <!-- <button id="modal-close" class="icon-btn">✕</button> -->
-        <button id="modal-close" class="icon-btn" style="color: white; background: transparent; border: none; font-size: 20px; cursor: pointer;">✕</button>
+       <button 
+    id="modal-close" 
+    style="color: white; 
+           background: transparent; 
+           border: none; 
+           font-size: 20px; 
+           cursor: pointer; 
+           padding: 0; 
+           line-height: 1;">
+    ✕
+</button>
+
       </div>
       <div class="modal-body">
         <div class="tabs">
@@ -253,7 +270,6 @@
         <input type="number" name="tenure" id="modal-tenure" step="1" min="0" placeholder="0">
       </label>
       <label>Status
-        <!-- <input type="text" name="status" id="modal-status" placeholder="Active / Inactive / Probation"> -->
          <select name="status" id="modal-status" class="form-actions">
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>

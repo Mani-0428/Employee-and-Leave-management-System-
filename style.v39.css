@@ -82,6 +82,7 @@ label {
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  
 }
 
 .btn:hover {
@@ -798,7 +799,7 @@ input:focus {
 
 /* Buttons */
 .btn {
-  background: transparent !important;
+  
   color: var(--text) !important;
   border: 1px solid rgba(255, 255, 255, 0.35) !important;
 }
@@ -985,7 +986,7 @@ tr:hover {
 }
 
 /* Common button style */
-.btn {
+/* .btn {
     padding: 6px 12px;
     border: none;
     border-radius: 5px;
@@ -994,7 +995,7 @@ tr:hover {
     margin-right: 5px;
     transition: all 0.2s ease;
     color: #fff;
-}
+} */
 
 /* View button */
 .view-btn {
@@ -1068,4 +1069,148 @@ tr:hover {
   color: #3498db;   /* smooth blue icons */
   margin-right: 6px;
   font-size: 16px;
+}
+
+
+/* 🌟 Table Wrapper */
+.table-container {
+  padding: 20px;
+  background: #f7f9fc;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  overflow-x: auto;
+  margin: 20px auto;
+}
+
+/* 🌟 Modern Table */
+.emp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 14px;
+  color: #333;
+  min-width: 1200px;
+}
+
+/* ✅ Header Styling */
+.emp-table thead th {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+  padding: 14px 10px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2px solid #ddd;
+}
+
+/* ✅ Table Cells */
+.emp-table tbody td {
+  padding: 12px 10px;
+  background: #fff;
+  border-bottom: 1px solid #e6eaf0;
+  transition: background 0.2s ease;
+}
+
+/* ✅ Zebra Stripes */
+.emp-table tbody tr:nth-child(odd) td {
+  background: #fdfdfd;
+}
+
+/* ✅ Hover Effect */
+.emp-table tbody tr:hover td {
+  background: #eaf3ff;
+}
+
+/* ✅ Checkbox Column */
+.checkbox-col {
+  width: 40px;
+  text-align: center;
+}
+
+/* ✅ Buttons inside table - black bold text */
+.emp-table button {
+  background: #f1f1f1;         /* light gray background */
+  border: 1px solid #ccc;
+  color: #000;                 /* black text */
+  font-weight: 700;            /* bold */
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.emp-table button:hover {
+  background: #e0e0e0;
+  color: #000;                 /* keep black on hover */
+}
+
+/* ✅ Responsive - Mobile View */
+@media (max-width: 768px) {
+  .emp-table thead {
+    display: none; /* Hide header */
+  }
+  .emp-table, .emp-table tbody, .emp-table tr, .emp-table td {
+    display: block;
+    width: 100%;
+  }
+  .emp-table tr {
+    margin-bottom: 15px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  .emp-table td {
+    text-align: right;
+    padding: 8px 10px;
+    position: relative;
+  }
+  .emp-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    font-weight: bold;
+    color: #555;
+  }
+}
+/* ✅ Buttons inside table - styled version */
+.emp-table button {
+  background: #3498db;           /* bright blue background */
+  border: 1px solid #2980b9;    /* slightly darker border */
+  color: #fff;                   /* white text */
+  font-weight: 700;              /* bold text */
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.emp-table button:hover {
+  background: #2980b9;           /* darker blue on hover */
+  color: #fff;                   /* keep white on hover */
+  transform: scale(1.05);        /* subtle zoom effect on hover */
+}
+/* Force all buttons to have dark text */
+button,
+.btn,
+.view-btn,
+.edit-btn,
+.delete-btn,
+.emp-table button {
+    color: #111 !important; /* dark text */
+}
+
+/* Keep transition intact */
+button,
+.btn,
+.view-btn,
+.edit-btn,
+.delete-btn,
+.emp-table button {
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }

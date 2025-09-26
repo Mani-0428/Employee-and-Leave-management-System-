@@ -1915,7 +1915,7 @@ document.getElementById('bulk-files').addEventListener('change', async function(
     const json = await res.json();
     if (json.ok) {
       alert('Imported: ' + json.imported);
-      loadEmployees();
+      // loadEmployees();
     } else {
       alert('Import failed: ' + json.error);
     }
@@ -1968,14 +1968,289 @@ let data = [];          // store DB employees
 
 // THIS ORIGINAL SHOWING DATA IN FRONTEND WORKINGFINE
 // --- Fetch employees and render table ---
+// function renderEmployeeTable(employees) {
+//     const tbody = document.getElementById('employee-table-body');
+//     if (!tbody) return;
+
+//     tbody.innerHTML = ''; // clear existing rows
+
+//     employees.forEach((emp, index) => {
+//         const tr = document.createElement('tr');
+//         tr.innerHTML = `
+//             <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
+//             <td>${index + 1}</td>
+//             <td>${emp.name || ''}</td>
+//             <td>${emp.emp_id || emp.empId || ''}</td>
+//             <td>${emp.personal_email || emp.personalEmail || ''}</td>
+//             <td>${emp.official_email || emp.officialEmail || ''}</td>
+//             <td>${emp.department || ''}</td>
+//             <td>${emp.joining_date || emp.joiningDate || ''}</td>
+//             <td>${emp.dob || ''}</td>
+//             <td>${emp.salary || ''}</td>
+//             <td>${emp.exit_date || emp.exitDate || ''}</td>
+//             <td>${emp.tenure || ''}</td>
+//             <td>${emp.status || ''}</td>
+//             <td>${emp.blood_group || emp.bloodGroup || ''}</td>
+//             <td>${emp.personal_phone || emp.personalPhone || ''}</td>
+//             <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
+//             <td>${emp.account_number || emp.accountNumber || ''}</td>
+//             <td>${emp.ifsc || ''}</td>
+//             <td>${emp.pan || ''}</td>
+//             <td>${emp.aadhar || ''}</td>
+//           <td>
+//     <button class="view-btn" data-id="${emp.id}">👁️ View</button>
+//     <button class="btn" data-act="edit" data-id="${emp.id}">✏️ Edit</button>
+//     <button class="delete-btn" data-id="${emp.emp_id || emp.empId || ''}">🗑️ Delete</button>
+// </td>
+
+//         `;
+//         tbody.appendChild(tr);
+//     });
+// // 1️⃣ Dynamically load SweetAlert2
+// const script = document.createElement('script');
+// script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+// script.onload = () => {
+//     // 2️⃣ SweetAlert2 is ready, attach view button listeners
+//     document.querySelectorAll('.view-btn').forEach(btn => {
+//         btn.addEventListener('click', () => {
+//             const emp = employees.find(e => e.id == btn.dataset.id);
+//             if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+//             Swal.fire({
+//                 title: `${emp.name} (${emp.emp_id || emp.empId})`,
+//               html: `
+//   <div style="
+//     display: grid;
+//     grid-template-columns: 180px 1fr;
+//     gap: 6px 12px;
+//     text-align: left;
+//     line-height: 1.6;
+//     font-size: 15px;
+//   ">
+//     <div>🏢 <b>Department :</b></div>        <div>${emp.department}</div>
+//     <div>📧 <b>Personal Email :</b></div>
+// <div>
+//   <a href="mailto:${emp.personal_email || emp.personalEmail}" 
+//      style="color:#3498db; text-decoration: none;">
+//     ${emp.personal_email || emp.personalEmail}
+//   </a>
+// </div>
+
+// <div>💼 <b>Official Email :</b></div>
+// <div>
+//   <a href="mailto:${emp.official_email || emp.officialEmail}" 
+//      style="color:#3498db; text-decoration: none;">
+//     ${emp.official_email || emp.officialEmail}
+//   </a>
+// </div>
+
+//     <div>🩸 <b>Blood Group :</b></div>      <div>${emp.blood_group || emp.bloodGroup}</div>
+//     <div>📱 <b>Personal Phone :</b></div>   <div>${emp.personal_phone || emp.personalPhone}</div>
+//     <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact}</div>
+//     <div>🗓️ <b>Joining Date :</b></div>    <div>${emp.joining_date || emp.joiningDate}</div>
+//     <div>🎂 <b>DOB :</b></div>              <div>${emp.dob}</div>
+//     <div>💰 <b>Salary :</b></div>           <div>₹${emp.salary}</div>
+//     <div>🚪 <b>Exit Date :</b></div>        <div>${emp.exit_date || emp.exitDate}</div>
+//     <div>⏳ <b>Tenure :</b></div>           <div>${emp.tenure}</div>
+//     <div>✅ <b>Status :</b></div>           <div>${emp.status}</div>
+//     <div>🏦 <b>Account :</b></div>        <div>${emp.account_number || emp.accountNumber}</div>
+//     <div>🏧 <b>IFSC :</b></div>             <div>${emp.ifsc}</div>
+//     <div>🆔 <b>PAN :</b></div>              <div>${emp.pan}</div>
+//     <div>🪪 <b>Aadhar :</b></div>           <div>${emp.aadhar}</div>
+//   </div>
+// `,
+//                 icon: 'info',
+//                 confirmButtonText: 'Close'
+//             });
+//         });
+//     });
+// };
+// document.head.appendChild(script);
+
+
+//     // // Add event listeners for edit buttons
+//     // document.querySelectorAll('.edit-btn').forEach(btn => {
+//     //     btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
+//     // });
+//     document.querySelectorAll('[data-act="edit"]').forEach(btn => {
+//     btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
+// });
+
+
+//     // Add event listeners for delete buttons
+//     document.querySelectorAll('.delete-btn').forEach(btn => {
+//         btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
+//     });
+
+
+
+// }
+// function renderEmployeeTable(employees) {
+//     const tbody = document.getElementById('employee-table-body');
+//     if (!tbody) return;
+
+//     tbody.innerHTML = ''; // clear previous rows
+
+//     employees.forEach((emp, index) => {
+//         const tr = document.createElement('tr');
+
+//         tr.innerHTML = `
+//             <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
+//             <td>${index + 1}</td>
+//             <td>${emp.name || ''}</td>
+//             <td>${emp.emp_id || emp.empId || ''}</td>
+//             <td>${emp.personal_email || emp.personalEmail || ''}</td>
+//             <td>${emp.official_email || emp.officialEmail || ''}</td>
+//             <td>${emp.department || ''}</td>
+//             <td>${emp.joining_date || emp.joiningDate || ''}</td>
+//             <td>${emp.dob || ''}</td>
+//             <td>${emp.salary || ''}</td>
+//             <td>${emp.exit_date || emp.exitDate || ''}</td>
+//             <td>${emp.tenure || ''}</td>
+//             <td>${emp.status || ''}</td>
+//             <td>${emp.blood_group || emp.bloodGroup || ''}</td>
+//             <td>${emp.personal_phone || emp.personalPhone || ''}</td>
+//             <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
+//             <td>${emp.account_number || emp.accountNumber || ''}</td>
+//             <td>${emp.ifsc || ''}</td>
+//             <td>${emp.pan || ''}</td>
+//             <td>${emp.aadhar || ''}</td>
+//            <td>
+//     <button style="
+//         background-color: #3498db;   /* blue */
+//         color: #fff;                  /* white text */
+//         font-weight: 700;
+//         padding: 6px 12px;
+//         border: 1px solid #2980b9;
+//         border-radius: 6px;
+//         cursor: pointer;
+//     " class="view-btn" data-id="${emp.id}">👁️ View</button>
+
+//     <button 
+//     style="
+//         background-color: #f1c40f; /* Yellow */
+//         color: #000;               /* Black text */
+//         font-weight: 700;
+//         padding: 6px 12px;
+//         border: 1px solid #d4ac0d;
+//         border-radius: 6px;
+//         cursor: pointer;
+//     " 
+//     class="btn" 
+//     data-act="edit" 
+//     data-id="${emp.id}">
+//     ✏️ Edit
+// </button>
+
+
+//     <button style="
+//         background-color: #e74c3c;   /* red */
+//         color: #fff;                  /* white text */
+//         font-weight: 700;
+//         padding: 6px 12px;
+//         border: 1px solid #c0392b;
+//         border-radius: 6px;
+//         cursor: pointer;
+//     " class="delete-btn" data-id="${emp.emp_id || emp.empId || ''}">🗑️ Delete</button>
+// </td>
+
+//         `;
+
+//         tbody.appendChild(tr);
+//     });
+
+//     // ✅ View (SweetAlert2) – load only once
+//     if (!window._sweetalertLoaded) {
+//         const script = document.createElement('script');
+//         script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+//         script.onload = attachViewListeners;
+//         document.head.appendChild(script);
+//         window._sweetalertLoaded = true;
+//     } else {
+//         attachViewListeners();
+//     }
+
+//     // ✅ Edit
+//     document.querySelectorAll('[data-act="edit"]').forEach(btn => {
+//         btn.addEventListener('click', () => {
+//             const emp = employees.find(e => e.id == btn.dataset.id);
+//             if (emp) openEditModal(emp);
+//         });
+//     });
+
+//     // ✅ Delete
+//     document.querySelectorAll('.delete-btn').forEach(btn => {
+//         btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
+//     });
+
+//     // --- Helper for SweetAlert2 View ---
+//     function attachViewListeners() {
+//         document.querySelectorAll('.view-btn').forEach(btn => {
+//             btn.addEventListener('click', () => {
+//                 const emp = employees.find(e => e.id == btn.dataset.id);
+//                 if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+//                 Swal.fire({
+//                     title: `${emp.name} (${emp.emp_id || emp.empId})`,
+//                     html: `
+//                         <div style="
+//                             display: grid;
+//                             grid-template-columns: 180px 1fr;
+//                             gap: 6px 12px;
+//                             text-align: left;
+//                             line-height: 1.6;
+//                             font-size: 15px;
+//                         ">
+//                             <div>🏢 <b>Department :</b></div><div>${emp.department || ''}</div>
+//                             <div>📧 <b>Personal Email :</b></div>
+//                             <div><a href="mailto:${emp.personal_email || emp.personalEmail}" style="color:#3498db; text-decoration:none;">
+//                                 ${emp.personal_email || emp.personalEmail}</a></div>
+
+//                             <div>💼 <b>Official Email :</b></div>
+//                             <div><a href="mailto:${emp.official_email || emp.officialEmail}" style="color:#3498db; text-decoration:none;">
+//                                 ${emp.official_email || emp.officialEmail}</a></div>
+
+//                             <div>🩸 <b>Blood Group :</b></div><div>${emp.blood_group || emp.bloodGroup || ''}</div>
+//                             <div>📱 <b>Personal Phone :</b></div><div>${emp.personal_phone || emp.personalPhone || ''}</div>
+//                             <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact || ''}</div>
+//                             <div>🗓️ <b>Joining Date :</b></div><div>${emp.joining_date || emp.joiningDate || ''}</div>
+//                             <div>🎂 <b>DOB :</b></div><div>${emp.dob || ''}</div>
+//                             <div>💰 <b>Salary :</b></div><div>₹${emp.salary || ''}</div>
+//                             <div>🚪 <b>Exit Date :</b></div><div>${emp.exit_date || emp.exitDate || ''}</div>
+//                             <div>⏳ <b>Tenure :</b></div><div>${emp.tenure || ''}</div>
+//                             <div>✅ <b>Status :</b></div><div>${emp.status || ''}</div>
+//                             <div>🏦 <b>Account :</b></div><div>${emp.account_number || emp.accountNumber || ''}</div>
+//                             <div>🏧 <b>IFSC :</b></div><div>${emp.ifsc || ''}</div>
+//                             <div>🆔 <b>PAN :</b></div><div>${emp.pan || ''}</div>
+//                             <div>🪪 <b>Aadhar :</b></div><div>${emp.aadhar || ''}</div>
+//                         </div>
+//                     `,
+//                     icon: 'info',
+//                     confirmButtonText: 'Close'
+//                 });
+//             });
+//         });
+//     }
+// }
 function renderEmployeeTable(employees) {
     const tbody = document.getElementById('employee-table-body');
     if (!tbody) return;
 
-    tbody.innerHTML = ''; // clear existing rows
+    // Helper: compute status (Probation/Active)
+    function getEmployeeStatus(emp) {
+        if (!emp.joining_date && !emp.joiningDate) return '';
+        const joiningDate = new Date(emp.joining_date || emp.joiningDate);
+        const today = new Date();
+        const diffMonths = (today.getFullYear() - joiningDate.getFullYear()) * 12 
+                         + (today.getMonth() - joiningDate.getMonth());
+        return diffMonths >= 3 ? 'Active' : 'Probation';
+    }
+
+    tbody.innerHTML = ''; // clear previous rows
 
     employees.forEach((emp, index) => {
         const tr = document.createElement('tr');
+
         tr.innerHTML = `
             <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
             <td>${index + 1}</td>
@@ -1989,7 +2264,7 @@ function renderEmployeeTable(employees) {
             <td>${emp.salary || ''}</td>
             <td>${emp.exit_date || emp.exitDate || ''}</td>
             <td>${emp.tenure || ''}</td>
-            <td>${emp.status || ''}</td>
+            <td>${emp.status || getEmployeeStatus(emp)}</td>
             <td>${emp.blood_group || emp.bloodGroup || ''}</td>
             <td>${emp.personal_phone || emp.personalPhone || ''}</td>
             <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
@@ -1997,78 +2272,194 @@ function renderEmployeeTable(employees) {
             <td>${emp.ifsc || ''}</td>
             <td>${emp.pan || ''}</td>
             <td>${emp.aadhar || ''}</td>
-          <td>
-    <button class="view-btn" data-id="${emp.id}">👁️ View</button>
-    <button class="btn" data-act="edit" data-id="${emp.id}">✏️ Edit</button>
-    <button class="delete-btn" data-id="${emp.emp_id || emp.empId || ''}">🗑️ Delete</button>
-</td>
+            <td>
+                <button style="
+                    background-color: #3498db; 
+                    color: #fff; 
+                    font-weight: 700;
+                    padding: 6px 12px;
+                    border: 1px solid #2980b9;
+                    border-radius: 6px;
+                    cursor: pointer;
+                " class="view-btn" data-id="${emp.id}">👁️ View</button>
 
+                <button style="
+                    background-color: #f1c40f; 
+                    color: #000; 
+                    font-weight: 700;
+                    padding: 6px 12px;
+                    border: 1px solid #d4ac0d;
+                    border-radius: 6px;
+                    cursor: pointer;
+                " class="btn" data-act="edit" data-id="${emp.id}">✏️ Edit</button>
+
+                <button style="
+                    background-color: #e74c3c; 
+                    color: #fff; 
+                    font-weight: 700;
+                    padding: 6px 12px;
+                    border: 1px solid #c0392b;
+                    border-radius: 6px;
+                    cursor: pointer;
+                " class="delete-btn" data-id="${emp.id || emp.emp_id || emp.empId}">🗑️ Delete</button>
+            </td>
         `;
+
         tbody.appendChild(tr);
     });
-// 1️⃣ Dynamically load SweetAlert2
-const script = document.createElement('script');
-script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
-script.onload = () => {
-    // 2️⃣ SweetAlert2 is ready, attach view button listeners
-    document.querySelectorAll('.view-btn').forEach(btn => {
+
+    // ✅ Load SweetAlert2 only once
+    if (!window._sweetalertLoaded) {
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+        script.onload = attachViewListeners;
+        document.head.appendChild(script);
+        window._sweetalertLoaded = true;
+    } else {
+        attachViewListeners();
+    }
+
+    // --- Edit buttons
+    document.querySelectorAll('[data-act="edit"]').forEach(btn => {
         btn.addEventListener('click', () => {
             const emp = employees.find(e => e.id == btn.dataset.id);
-            if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
-
-            Swal.fire({
-                title: `${emp.name} (${emp.emp_id || emp.empId})`,
-              html: `
-  <div style="
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 6px 12px;
-    text-align: left;
-    line-height: 1.6;
-    font-size: 15px;
-  ">
-    <div>🏢 <b>Department :</b></div>        <div>${emp.department}</div>
-    <div>📧 <b>Personal Email :</b></div>   <div>${emp.personal_email || emp.personalEmail}</div>
-    <div>💼 <b>Official Email :</b></div>   <div>${emp.official_email || emp.officialEmail}</div>
-    <div>🩸 <b>Blood Group :</b></div>      <div>${emp.blood_group || emp.bloodGroup}</div>
-    <div>📱 <b>Personal Phone :</b></div>   <div>${emp.personal_phone || emp.personalPhone}</div>
-    <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact}</div>
-    <div>🗓️ <b>Joining Date :</b></div>    <div>${emp.joining_date || emp.joiningDate}</div>
-    <div>🎂 <b>DOB :</b></div>              <div>${emp.dob}</div>
-    <div>💰 <b>Salary :</b></div>           <div>₹${emp.salary}</div>
-    <div>🚪 <b>Exit Date :</b></div>        <div>${emp.exit_date || emp.exitDate}</div>
-    <div>⏳ <b>Tenure :</b></div>           <div>${emp.tenure}</div>
-    <div>✅ <b>Status :</b></div>           <div>${emp.status}</div>
-    <div>🏦 <b>Account :</b></div>        <div>${emp.account_number || emp.accountNumber}</div>
-    <div>🏧 <b>IFSC :</b></div>             <div>${emp.ifsc}</div>
-    <div>🆔 <b>PAN :</b></div>              <div>${emp.pan}</div>
-    <div>🪪 <b>Aadhar :</b></div>           <div>${emp.aadhar}</div>
-  </div>
-`,
-                icon: 'info',
-                confirmButtonText: 'Close'
-            });
+            if (emp) {
+                openEditModal(emp, updatedEmp => {
+                    // Update in-memory array
+                    const index = employees.findIndex(e => e.id == updatedEmp.id);
+                    if (index > -1) employees[index] = updatedEmp;
+                    renderEmployeeTable(employees); // re-render dynamically
+                });
+            }
         });
     });
-};
-document.head.appendChild(script);
 
-
-    // // Add event listeners for edit buttons
-    // document.querySelectorAll('.edit-btn').forEach(btn => {
-    //     btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
-    // });
-    document.querySelectorAll('[data-act="edit"]').forEach(btn => {
-    btn.addEventListener('click', () => openEditModal(btn.dataset.id, employees));
-});
-
-
-    // Add event listeners for delete buttons
+    // --- Delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
+        btn.addEventListener('click', () => {
+            const empId = btn.dataset.id;
+            // Optional: confirm delete
+            if (confirm("Are you sure you want to delete this employee?")) {
+                // Remove from array
+                employees = employees.filter(emp => emp.id != empId);
+                renderEmployeeTable(employees); // re-render dynamically
+                // TODO: also call backend delete API if needed
+            }
+        });
     });
 
+    // --- SweetAlert2 View
+    function attachViewListeners() {
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const emp = employees.find(e => e.id == btn.dataset.id);
+                if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+                Swal.fire({
+                    title: `${emp.name} (${emp.emp_id || emp.empId})`,
+                    html: `
+                        <div style="
+                            display: grid;
+                            grid-template-columns: 180px 1fr;
+                            gap: 6px 12px;
+                            text-align: left;
+                            line-height: 1.6;
+                            font-size: 15px;
+                        ">
+                            <div>🏢 <b>Department :</b></div><div>${emp.department || ''}</div>
+                            <div>📧 <b>Personal Email :</b></div>
+                            <div><a href="mailto:${emp.personal_email || emp.personalEmail}" style="color:#3498db; text-decoration:none;">
+                                ${emp.personal_email || emp.personalEmail}</a></div>
+
+                            <div>💼 <b>Official Email :</b></div>
+                            <div><a href="mailto:${emp.official_email || emp.officialEmail}" style="color:#3498db; text-decoration:none;">
+                                ${emp.official_email || emp.officialEmail}</a></div>
+
+                            <div>🩸 <b>Blood Group :</b></div><div>${emp.blood_group || emp.bloodGroup || ''}</div>
+                            <div>📱 <b>Personal Phone :</b></div><div>${emp.personal_phone || emp.personalPhone || ''}</div>
+                            <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact || ''}</div>
+                            <div>🗓️ <b>Joining Date :</b></div><div>${emp.joining_date || emp.joiningDate || ''}</div>
+                            <div>🎂 <b>DOB :</b></div><div>${emp.dob || ''}</div>
+                            <div>💰 <b>Salary :</b></div><div>₹${emp.salary || ''}</div>
+                            <div>🚪 <b>Exit Date :</b></div><div>${emp.exit_date || emp.exitDate || ''}</div>
+                            <div>⏳ <b>Tenure :</b></div><div>${emp.tenure || ''}</div>
+                            <div>✅ <b>Status :</b></div><div>${emp.status || getEmployeeStatus(emp)}</div>
+                            <div>🏦 <b>Account :</b></div><div>${emp.account_number || emp.accountNumber || ''}</div>
+                            <div>🏧 <b>IFSC :</b></div><div>${emp.ifsc || ''}</div>
+                            <div>🆔 <b>PAN :</b></div><div>${emp.pan || ''}</div>
+                            <div>🪪 <b>Aadhar :</b></div><div>${emp.aadhar || ''}</div>
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'Close'
+                });
+            });
+        });
+    }
 }
+
+// Track which tab is currently active
+let currentFilter = 'all';
+
+// Filter employees based on currentFilter
+function filterEmployees(employees) {
+  return employees.filter(emp => {
+    const status = (emp.status || '').toLowerCase();
+    const tenureMonths = parseFloat(emp.tenure) || 0;
+
+    switch (currentFilter) {
+      case 'active':
+        return status === 'active';
+      case 'inactive':
+        return status === 'inactive';
+      case 'probation':
+        // Explicit probation OR tenure <= 3 months
+        return status === 'probation' || tenureMonths <= 3;
+      default: // 'all'
+        return true;
+    }
+  });
+}
+// --- Tab handling ---
+// Example: buttons have class="qbtn" and data-q="all|active|inactive|probation"
+document.querySelectorAll('.qbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Update which filter is active
+    currentFilter = btn.dataset.q;
+
+    // Visual active state
+    document.querySelectorAll('.qbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Re-render the table using the filtered employees
+    renderEmployeeTable(filterEmployees(window.allEmployees));
+  });
+});
+fetch('/api/employees')
+  .then(r => r.json())
+  .then(data => {
+      window.allEmployees = data;  // store globally
+      renderEmployeeTable(filterEmployees(data)); // filterEmployees() applies active/inactive/probation tabs
+  });
+// --- Initial load example ---
+fetch('/api/employees')
+  .then(r => r.json())
+  .then(data => {
+    window.allEmployees = data;
+    renderEmployeeTable(filterEmployees(data)); // show all on first load
+  });
+
+
+// Attach filter button events
+document.querySelectorAll('#queues .qbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#queues .qbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.q;
+    renderEmployeeTable(filterEmployees(window.allEmployees || []));
+  });
+});
+
 // ✅ Run this ONCE after page load
 document.addEventListener('DOMContentLoaded', () => {
     const selectAll = document.getElementById('select-all');
@@ -2350,20 +2741,6 @@ const modal = document.getElementById("modal");
 const empForm = document.getElementById("emp-form");
 const modalTitle = document.getElementById("modal-title");
 
-// // Fetch employees from PHP
-// async function fetchEmployees() {
-//     try {
-//         const res = await fetch("employee.php?action=fetch");
-//         const json = await res.json();
-//         if(json.status === "ok") {
-//             renderEmployees(json.data);
-//             allBadge.textContent = json.data.length;
-//         }
-//     } catch(err) {
-//         console.error(err);
-//     }
-// }
-
 // Render employees into table
 function renderEmployees(employees) {
     empTable.innerHTML = "";
@@ -2401,87 +2778,78 @@ function openAddModal() {
     modal.classList.remove("hidden");
 }
 
-// function openEditModal(emp) {
-//     // Set modal title and show modal
+// function openEditModal(emp = null) {
 //     const modal = document.getElementById("modal");
 //     const modalTitle = document.getElementById("modal-title");
 //     const empForm = document.getElementById("emp-form");
 
-//     modalTitle.textContent = "Edit Employee";
+//     // Show modal
 //     modal.classList.remove("hidden");
+//     modalTitle.textContent = emp ? "Edit Employee" : "Add Employee";
 
-//     // Store empId in dataset for updating later
-//     empForm.dataset.empId = emp.empId;
+//     // Reset form for new entry
+//     empForm.reset();
+//     delete empForm.dataset.empId;
 
-//     // Populate modal fields safely
-//     empForm.querySelector("#modal-name").value = emp.name || "";
-//     empForm.querySelector("#modal-employee-id").value = emp.empId || "";
-//     empForm.querySelector("#modal-department").value = emp.department || "";
-//     empForm.querySelector("#modal-blood-group").value = emp.bloodGroup || "";
-//     empForm.querySelector("#modal-personal-email").value = emp.personalEmail || "";
-//     empForm.querySelector("#modal-official-email").value = emp.officialEmail || "";
-//     empForm.querySelector("#modal-personal-phone").value = emp.personalPhone || "";
-//     empForm.querySelector("#modal-emergency-contact").value = emp.emergencyContact || "";
-//     empForm.querySelector("#modal-joining-date").value = emp.joiningDate || "";
-//     empForm.querySelector("#modal-dob").value = emp.dob || "";
-//     empForm.querySelector("#modal-salary").value = emp.salary || "";
-//     empForm.querySelector("#modal-exit-date").value = emp.exitDate || "";
-//     empForm.querySelector("#modal-status").value = emp.status || "";
-//     empForm.querySelector("#modal-wotAllowance").checked = !!emp.wotAllowance;
-//     empForm.querySelector("#modal-account-number").value = emp.accountNumber || "";
-//     empForm.querySelector("#modal-ifsc").value = emp.ifsc || "";
-//     empForm.querySelector("#modal-pan").value = emp.pan || "";
-//     empForm.querySelector("#modal-aadhar").value = emp.aadhar || "";
+//     if (emp) {
+//         // Use consistent keys (handle both DB + JS keys)
+//         const e = {
+//             id: emp.id || "",
+//             name: emp.name || "",
+//             empId: emp.emp_id || emp.empId || "",
+//             department: emp.department || "",
+//             bloodGroup: emp.blood_group || emp.bloodGroup || "",
+//             personalPhone: emp.personal_phone || emp.personalPhone || "",
+//             emergencyContact: emp.emergency_contact || emp.emergencyContact || "",
+//             personalEmail: emp.personal_email || emp.personalEmail || "",
+//             officialEmail: emp.official_email || emp.officialEmail || "",
+//             joiningDate: emp.joining_date || emp.joiningDate || "",
+//             dob: emp.dob || "",
+//             salary: emp.salary || "",
+//             exitDate: emp.exit_date || emp.exitDate || "",
+//             tenure: emp.tenure || "",
+//             status: emp.status || "",
+//             wotAllowance: emp.wotAllowance || false,
+//             accountNumber: emp.account_number || emp.accountNumber || "",
+//             ifsc: emp.ifsc || "",
+//             pan: emp.pan || "",
+//             aadhar: emp.aadhar || ""
+//         };
+
+//         // Store ID for update
+//         empForm.dataset.empId = e.empId;
+
+//         // Fill fields
+//         empForm.querySelector("#modal-name").value = e.name;
+//         empForm.querySelector("#modal-employee-id").value = e.empId;
+//         empForm.querySelector("#modal-department").value = e.department;
+//         empForm.querySelector("#modal-blood-group").value = e.bloodGroup;
+
+//         empForm.querySelector("#modal-personal-contact").value = e.personalPhone;
+//         empForm.querySelector("#modal-emergency-contact").value = e.emergencyContact;
+//         empForm.querySelector("#modal-personal-email").value = e.personalEmail;
+//         empForm.querySelector("#modal-official-email").value = e.officialEmail;
+
+//         empForm.querySelector("#modal-joining-date").value = e.joiningDate;
+//         empForm.querySelector("#modal-dob").value = e.dob;
+//         empForm.querySelector("#modal-salary").value = e.salary;
+//         empForm.querySelector("#modal-exit-date").value = e.exitDate;
+//         empForm.querySelector("#modal-tenure").value = e.tenure;
+//         empForm.querySelector("#modal-status").value = e.status;
+//         empForm.querySelector("#modal-wotAllowance").checked = !!e.wotAllowance;
+
+//         empForm.querySelector("#modal-accountNumber").value = e.accountNumber;
+//         empForm.querySelector("#modal-ifsc").value = e.ifsc;
+//         empForm.querySelector("#modal-pan").value = e.pan;
+//         empForm.querySelector("#modal-aadhar").value = e.aadhar;
+//     }
 // }
-function openEditModal(emp = null) {
-    const modal = document.getElementById("modal");
-    const modalTitle = document.getElementById("modal-title");
-    const empForm = document.getElementById("emp-form");
 
-    modal.classList.remove("hidden");
-    modalTitle.textContent = emp ? "Edit Employee" : "Add Employee";
-
-    empForm.reset();
-    delete empForm.dataset.empId;
-
-    if (emp) {
-        empForm.dataset.empId = emp.empId;
-
-        // Identity
-        empForm.querySelector("#modal-name").value = emp.name || "";
-        empForm.querySelector("#modal-employee-id").value = emp.empId || "";
-        empForm.querySelector("#modal-department").value = emp.department || "";
-        empForm.querySelector("#modal-blood-group").value = emp.bloodGroup || "";
-
-        // Contacts
-        empForm.querySelector("#modal-personal-contact").value = emp.personalPhone || "";
-        empForm.querySelector("#modal-emergency-contact").value = emp.emergencyContact || "";
-        empForm.querySelector("#modal-personal-email").value = emp.personalEmail || "";
-        empForm.querySelector("#modal-official-email").value = emp.officialEmail || "";
-
-        // Employment
-        empForm.querySelector("#modal-joining-date").value = emp.joiningDate || "";
-        empForm.querySelector("#modal-dob").value = emp.dob || "";
-        empForm.querySelector("#modal-salary").value = emp.salary || 0;
-        empForm.querySelector("#modal-exit-date").value = emp.exitDate || "";
-        empForm.querySelector("#modal-tenure").value = emp.tenure || "";
-        empForm.querySelector("#modal-status").value = emp.status || "";
-        empForm.querySelector("#modal-wotAllowance").checked = !!emp.wotAllowance;
-
-        // Banking
-        empForm.querySelector("#modal-accountNumber").value = emp.accountNumber || "";
-        empForm.querySelector("#modal-ifsc").value = emp.ifsc || "";
-
-        // IDs
-        empForm.querySelector("#modal-pan").value = emp.pan || "";
-        empForm.querySelector("#modal-aadhar").value = emp.aadhar || "";
-    }
-}
 
 // Close modal
-document.getElementById("modal-close").addEventListener("click", () => {
-    document.getElementById("modal").classList.add("hidden");
-});
+// document.getElementById("modal-close").addEventListener("click", () => {
+//     document.getElementById("modal").classList.add("hidden");
+// });
 
 
 
@@ -2543,6 +2911,134 @@ document.querySelectorAll(".tab").forEach(tab => {
         pane?.classList.add("active");
     });
 });
+function openEditModal(emp = null, onSaveCallback = null) {
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modal-title");
+    const empForm = document.getElementById("emp-form");
+
+    // Show modal
+    modal.classList.remove("hidden");
+    modalTitle.textContent = emp ? "Edit Employee" : "Add Employee";
+
+    // Reset form for new entry
+    empForm.reset();
+    delete empForm.dataset.empId;
+
+    // Helper: compute status dynamically
+    function getEmployeeStatus(joiningDate) {
+        if (!joiningDate) return '';
+        const joinDate = new Date(joiningDate);
+        const today = new Date();
+        const diffMonths = (today.getFullYear() - joinDate.getFullYear()) * 12 
+                         + (today.getMonth() - joinDate.getMonth());
+        return diffMonths >= 3 ? 'Active' : 'Probation';
+    }
+
+    if (emp) {
+        // Map employee fields consistently
+        const e = {
+            id: emp.id || "",
+            name: emp.name || "",
+            empId: emp.emp_id || emp.empId || "",
+            department: emp.department || "",
+            bloodGroup: emp.blood_group || emp.bloodGroup || "",
+            personalPhone: emp.personal_phone || emp.personalPhone || "",
+            emergencyContact: emp.emergency_contact || emp.emergencyContact || "",
+            personalEmail: emp.personal_email || emp.personalEmail || "",
+            officialEmail: emp.official_email || emp.officialEmail || "",
+            joiningDate: emp.joining_date || emp.joiningDate || "",
+            dob: emp.dob || "",
+            salary: emp.salary || "",
+            exitDate: emp.exit_date || emp.exitDate || "",
+            tenure: emp.tenure || "",
+            status: emp.status || getEmployeeStatus(emp.joining_date || emp.joiningDate),
+            wotAllowance: emp.wotAllowance || false,
+            accountNumber: emp.account_number || emp.accountNumber || "",
+            ifsc: emp.ifsc || "",
+            pan: emp.pan || "",
+            aadhar: emp.aadhar || ""
+        };
+
+        // Store ID for update
+        empForm.dataset.empId = e.id;
+
+        // Fill fields
+        empForm.querySelector("#modal-name").value = e.name;
+        empForm.querySelector("#modal-employee-id").value = e.empId;
+        empForm.querySelector("#modal-department").value = e.department;
+        empForm.querySelector("#modal-blood-group").value = e.bloodGroup;
+
+        empForm.querySelector("#modal-personal-contact").value = e.personalPhone;
+        empForm.querySelector("#modal-emergency-contact").value = e.emergencyContact;
+        empForm.querySelector("#modal-personal-email").value = e.personalEmail;
+        empForm.querySelector("#modal-official-email").value = e.officialEmail;
+
+        empForm.querySelector("#modal-joining-date").value = e.joiningDate;
+        empForm.querySelector("#modal-dob").value = e.dob;
+        empForm.querySelector("#modal-salary").value = e.salary;
+        empForm.querySelector("#modal-exit-date").value = e.exitDate;
+        empForm.querySelector("#modal-tenure").value = e.tenure;
+        empForm.querySelector("#modal-status").value = e.status;
+        empForm.querySelector("#modal-wotAllowance").checked = !!e.wotAllowance;
+
+        empForm.querySelector("#modal-accountNumber").value = e.accountNumber;
+        empForm.querySelector("#modal-ifsc").value = e.ifsc;
+        empForm.querySelector("#modal-pan").value = e.pan;
+        empForm.querySelector("#modal-aadhar").value = e.aadhar;
+    }
+
+    // --- Save button handler
+    empForm.onsubmit = function (event) {
+        event.preventDefault();
+
+        const updatedEmp = {
+            id: empForm.dataset.empId || Date.now(), // new ID if adding
+            name: empForm.querySelector("#modal-name").value.trim(),
+            empId: empForm.querySelector("#modal-employee-id").value.trim(),
+            department: empForm.querySelector("#modal-department").value.trim(),
+            bloodGroup: empForm.querySelector("#modal-blood-group").value.trim(),
+            personalPhone: empForm.querySelector("#modal-personal-contact").value.trim(),
+            emergencyContact: empForm.querySelector("#modal-emergency-contact").value.trim(),
+            personalEmail: empForm.querySelector("#modal-personal-email").value.trim(),
+            officialEmail: empForm.querySelector("#modal-official-email").value.trim(),
+            joiningDate: empForm.querySelector("#modal-joining-date").value,
+            dob: empForm.querySelector("#modal-dob").value,
+            salary: empForm.querySelector("#modal-salary").value.trim(),
+            exitDate: empForm.querySelector("#modal-exit-date").value,
+            tenure: empForm.querySelector("#modal-tenure").value.trim(),
+            status: getEmployeeStatus(empForm.querySelector("#modal-joining-date").value),
+            wotAllowance: empForm.querySelector("#modal-wotAllowance").checked,
+            accountNumber: empForm.querySelector("#modal-accountNumber").value.trim(),
+            ifsc: empForm.querySelector("#modal-ifsc").value.trim(),
+            pan: empForm.querySelector("#modal-pan").value.trim(),
+            aadhar: empForm.querySelector("#modal-aadhar").value.trim()
+        };
+
+        // Callback to update table and array dynamically
+        if (typeof onSaveCallback === "function") {
+            onSaveCallback(updatedEmp);
+        }
+
+        // Close modal
+        modal.classList.add("hidden");
+    };
+}
+function getEmployeeStatus(joiningDate) {
+    if (!joiningDate) return '';
+    const joinDate = new Date(joiningDate);
+    const today = new Date();
+
+    // Calculate full month difference
+    const yearDiff = today.getFullYear() - joinDate.getFullYear();
+    const monthDiff = today.getMonth() - joinDate.getMonth();
+    const dayDiff = today.getDate() - joinDate.getDate();
+
+    let totalMonths = yearDiff * 12 + monthDiff;
+    if (dayDiff < 0) totalMonths--; // If joining day not reached this month
+
+    return totalMonths >= 3 ? 'Active' : 'Probation';
+}
+
 
 // Attach once, works for dynamically created rows
 document.getElementById('employee-table-body').addEventListener('dblclick', async (e) => {
