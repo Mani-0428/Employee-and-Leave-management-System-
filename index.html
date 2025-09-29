@@ -8,12 +8,7 @@
 </head>
 <head>
   <!-- ✅ Font Awesome for Smooth Stylish Icons -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        integrity="sha512-SzlrxWriC3zFZ7z8kA1F1Ug1vB+O9QJkVVU5lHQlI2zFeoJ6hM7bO1L+DYzO7hZaK0rFV0yZ5xWb46C5z8+g3g=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
-</head>
+
 
 <body>
   <!-- Login Screen -->
@@ -115,67 +110,79 @@
 </header>
 
 
-    <main class="container">
-      <div class="actions-bar">
-        <button id="btn-add" class="btn">Add Employee</button>
-        <!-- <button id="btn-delete-selected" class="btn danger">Delete Selected</button> -->
-         <!-- <button id="btn-delete-selected" class="btn danger" disabled>Delete Selected</button> -->
-        <!-- <span id="selected-count" class="badge">0</span> -->
-        <button id="btn-bulk-import" class="btn">Bulk Import</button>
-        <button id="btn-export" class="btn">Export JSON</button>
-        <button id="btn-export-csv" class="btn">Export CSV</button>
-        <label class="file-btn">
-          <input type="file" id="import-file" accept=".json" hidden>
-          <span class="btn">Import JSON</span>
-        </label>
-        <button id="btn-settings" class="btn">Settings</button>
-        <input id="search" type="search" placeholder="Search name, ID, email, department, IFSC, PAN, Aadhar..." />
-      </div>
-      <a href="http://localhost/elms/admin/index.php" class="btn">Apply Leave</a>
+   <main class="container">
+  <div class="actions-bar">
+    <button id="btn-add" class="btn">Add Employee</button>
+    <button id="btn-bulk-import" class="btn">Bulk Import</button>
+    <button id="btn-export" class="btn">Export JSON</button>
+    <button id="btn-export-csv" class="btn">Export CSV</button>
 
-      <div id="queues" class="queues">
-        <button class="qbtn active" data-q="all">All Employees </button>
-        <button class="qbtn" data-q="active">Active </button>
-        <button class="qbtn" data-q="inactive">Inactive </button>
-        <button class="qbtn" data-q="probation">Probation (≤ 3 mo) </button>
-      </div>
-<div id="employee-list"></div>
-<!-- ✅ Employee Table -->
-<div class="table-container">
-  <table id="emp-table" class="emp-table">
-    <thead>
-      <tr>
-        <th class="checkbox-col"><input type="checkbox" id="select-all" title="Select All"/></th>
-        <th>#</th>
-        <th>Name</th>
-        <th>Employee ID</th>
-        <th>Personal Email</th>
-        <th>Official Email</th>
-        <th>Department</th>
-        <th>Joining Date</th>
-        <th>DOB</th>
-        <th>Salary (₹/mo)</th>
-        <th>Exit Date</th>
-        <th>Tenure (months)</th>
-        <th>Status</th>
-        <th>Blood Group</th>
-        <th>Personal Phone</th>
-        <th>Emergency Contact</th>
-        <th>Account #</th>
-        <th>IFSC</th>
-        <th>PAN</th>
-        <th>Aadhar</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="employee-table-body">
-      <!-- Data will be dynamically inserted -->
-    </tbody>
-  </table>
-</div>
+    <!-- <label class="file-btn">
+      <input type="file" id="import-file" accept=".json" hidden>
+      <span class="btn">Import JSON</span>
+    </label> -->
 
+    <button id="btn-settings" class="btn">Settings</button>
 
-    </main>
+    <!-- 🔎 Search Box -->
+    <input id="search" type="search"
+      placeholder="Search name, ID, email, department, IFSC, PAN, Aadhar..."
+      style="
+        width: 320px;
+        padding: 8px 12px;
+        margin-left: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+      " />
+  </div>
+
+  <!-- Queues / Filters -->
+  <div id="queues" class="queues">
+    <button class="qbtn active" data-q="all">All Employees</button>
+    <button class="qbtn" data-q="active">Active</button>
+    <button class="qbtn" data-q="inactive">Inactive</button>
+    <button class="qbtn" data-q="probation">Probation (≤ 3 mo)</button>
+  </div>
+
+  <!-- ✅ Employee Table -->
+  <div class="table-container">
+    <table id="emp-table" class="emp-table">
+      <thead>
+        <tr>
+          <th class="checkbox-col">
+            <input type="checkbox" id="select-all" title="Select All"/>
+          </th>
+          <th>#</th>
+          <th>Name</th>
+          <th>Employee ID</th>
+          <th>Personal Email</th>
+          <th>Official Email</th>
+          <th>Department</th>
+          <th>Joining Date</th>
+          <th>DOB</th>
+          <th>Salary (₹/mo)</th>
+          <th>Exit Date</th>
+          <th>Tenure (months)</th>
+          <th>Status</th>
+          <th>WOT Allowance</th>
+          <th>Blood Group</th>
+          <th>Personal Phone</th>
+          <th>Emergency Contact</th>
+          <th>Account #</th>
+          <th>IFSC</th>
+          <th>PAN</th>
+          <th>Aadhar</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="employee-table-body">
+        <!-- Data dynamically inserted by renderEmployeeTable() -->
+      </tbody>
+    </table>
+  </div>
+</main>
+
   </section>
 
   <!-- Add/Edit Modal -->
@@ -183,10 +190,10 @@
     <div class="modal-card">
       <div class="modal-header">
         <h3 id="modal-title">Add Employee</h3>
-        <!-- <button id="modal-close" class="icon-btn">✕</button> -->
-       <button 
+        <button id="modal-close" class="icon-btn" style="color: #ffffff;">✕</button>
+       <!-- <button 
     id="modal-close" 
-    style="color: white; 
+    style="color: rgb(237, 9, 9); 
            background: transparent; 
            border: none; 
            font-size: 20px; 
@@ -194,7 +201,7 @@
            padding: 0; 
            line-height: 1;">
     ✕
-</button>
+</button> -->
 
       </div>
       <div class="modal-body">
@@ -271,7 +278,7 @@
       </label>
       <label>Status
          <select name="status" id="modal-status" class="form-actions">
-          <option value="Active">Active</option>
+          <option value="Active" >Active</option>
           <option value="Inactive">Inactive</option>
           <option value="Probation">Probation</option>
          </select>

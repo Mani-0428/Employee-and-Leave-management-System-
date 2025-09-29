@@ -1321,7 +1321,7 @@ els.tableBody?.addEventListener('click', async (e) => {
     const s = getSettings();
     const dt = new Date().toISOString().replace(/[:T]/g,'-').slice(0,19);
     download(`EmployeeData_${dt}.json`, JSON.stringify(data, null, 2));
-    alert(`Choose your folder when saving.\nHint: ${s.storageHint}`);
+    // alert(`Choose your folder when saving.\nHint: ${s.storageHint}`);
   });
   els.exportCsvBtn?.addEventListener('click', () => {
     if(!data.length) return alert('No data to export');
@@ -1531,17 +1531,43 @@ els.tableBody?.addEventListener('click', async (e) => {
     alert(`Import complete. Inserted: ${inserted}, Updated: ${updated}, Skipped: ${skipped}` + (errors.length? `\nIssues:\n- `+errors.join('\n- ') : ''));
   }
 
-  function downloadTemplates(kind){
-    const headers = ['name','empId','personalEmail','officialEmail','department','joiningDate','dob','salary','exitDate','bloodGroup','personalPhone','emergencyContact','accountNumber','ifsc','pan','aadhar','status','wotAllowance'];
-    if(kind==='csv'){
-      //const sample = ['Aarav Kumar','PT-010','aarav.kumar@example.com','aarav.k@platoontitleservices.com','Operations','2023-06-15','1994-02-11','50000','','B+','+91-9876543210','+91-9876500001','123456789012','HDFC0001234','ABCDE1234F','123412341234','Active','true'];
-      const lines = [headers.join(','), sample.join(',')].join('\n');
-      const blob=new Blob([lines],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='EmployeeTemplate.csv'; document.body.appendChild(a); a.click(); URL.revokeObjectURL(a.href); a.remove();
-    } else {
-      const tmpl = [Object.fromEntries(headers.map(h => [h, '']))];
-      const blob=new Blob([JSON.stringify(tmpl, null, 2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='EmployeeTemplate.json'; document.body.appendChild(a); a.click(); URL.revokeObjectURL(a.href); a.remove();
+ function downloadTemplates(kind) {
+    const headers = [
+        'name','empId','personalEmail','officialEmail','department','joiningDate','dob','salary',
+        'exitDate','bloodGroup','personalPhone','emergencyContact','accountNumber','ifsc','pan',
+        'aadhar','status','wotAllowance'
+    ];
+
+    // ✅ Example sample row
+    const sample = [
+        'Aarav Kumar','PT-010','aarav.kumar@example.com','aarav.k@platoontitleservices.com',
+        'Operations','2023-06-15','1994-02-11','50000','','B+','9876543210','9876500001',
+        '123456789012','HDFC0001234','ABCDE1234F','123412341234','Active','TRUE'
+    ];
+
+    if (kind === 'csv') {
+        const lines = [headers.join(','), sample.map(v => `"${v}"`).join(',')].join('\n');
+        const blob = new Blob([lines], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'EmployeeTemplate.csv';
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(a.href);
+        a.remove();
+    } else if (kind === 'json') {
+        const tmpl = [Object.fromEntries(headers.map((h, i) => [h, sample[i] || '']))];
+        const blob = new Blob([JSON.stringify(tmpl, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'EmployeeTemplate.json';
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(a.href);
+        a.remove();
     }
-  }
+}
+
 
   // Click-outside/Escape
   modal.root?.addEventListener('click', (e) => { if(e.target === modal.root) closeAllModals(); });
@@ -1730,12 +1756,12 @@ async function deleteSelected(ids) {
 }
 
 // Bulk import employees
-async function bulkImport(employees) {
-  let form = new FormData();
-  form.append("employees", JSON.stringify(employees));
-  await fetch("employee.php?action=bulkImport", { method:"POST", body:form });
-  loadEmployees();
-}
+// async function bulkImport(employees) {
+//   let form = new FormData();
+//   form.append("employees", JSON.stringify(employees));
+//   await fetch("employee.php?action=bulkImport", { method:"POST", body:form });
+//   loadEmployees();
+// }
 
 // Handle CSV/Excel import
 async function handleFileImport(file) {
@@ -1899,7 +1925,7 @@ document.querySelector('#emp-form').addEventListener('submit', async function(ev
     closeModal();
     loadEmployees();
   } catch (err) {
-    alert('Save failed: ' + err.message);
+    // alert('Save failed: ' + err.message);
   }
 });
 
@@ -1924,13 +1950,75 @@ document.getElementById('bulk-files').addEventListener('change', async function(
   }
 });
 
-// Export JSON / CSV buttons
-document.getElementById('btn-export').addEventListener('click', function(){
-  window.location = `${API_BASE}?action=export_json`;
+// ✅ Export JSON / CSV dynamically from the current table data
+document.getElementById('btn-export').addEventListener('click', () => {
+    const data = renderEmployeeTable._allEmployees || [];
+    if (!data.length) return alert('No employee data to export.');
+
+    const jsonBlob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(jsonBlob);
+    a.download = 'Employees.json';
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(a.href);
+    a.remove();
 });
-document.getElementById('btn-export-csv').addEventListener('click', function(){
-  window.location = `${API_BASE}?action=export_csv`;
+
+// ✅ Helper function to normalize WOT Allowance
+function normalizeWOT(val) {
+    if (val === undefined || val === null) return '';
+    const v = val.toString().trim().toLowerCase();
+    if (v === 'true' || v === '1' || v === 'yes') return 'TRUE';
+    if (v === 'false' || v === '0' || v === 'no') return 'FALSE';
+    return '';
+}
+
+// Export CSV button
+document.getElementById('btn-export-csv').addEventListener('click', () => {
+    const data = renderEmployeeTable._allEmployees || [];
+    if (!data.length) return alert('No employee data to export.');
+
+    const headers = [
+        'name','empId','personalEmail','officialEmail','department','joiningDate','dob',
+        'salary','exitDate','bloodGroup','personalPhone','emergencyContact','accountNumber',
+        'ifsc','pan','aadhar','status','wotAllowance'
+    ];
+
+    const lines = [
+        headers.join(','), // CSV header
+        data.map(emp => [
+            emp.name || '',
+            emp.emp_id || emp.empId || '',
+            emp.personal_email || emp.personalEmail || '',
+            emp.official_email || emp.officialEmail || '',
+            emp.department || '',
+            emp.joining_date || emp.joiningDate || '',
+            emp.dob || '',
+            emp.salary || '',
+            emp.exit_date || emp.exitDate || '',
+            emp.blood_group || emp.bloodGroup || '',
+            emp.personal_phone || emp.personalPhone || '',
+            emp.emergency_contact || emp.emergencyContact || '',
+            emp.account_number || emp.accountNumber || '',
+            emp.ifsc || '',
+            emp.pan || '',
+            emp.aadhar || '',
+            emp.status || '',
+            normalizeWOT(emp.wot_allowance ?? emp.wotAllowance) // ✅ Normalized TRUE/FALSE
+        ].map(v => `"${v}"`).join(',')) // Wrap values in quotes to handle commas
+    ].join('\n');
+
+    const csvBlob = new Blob([lines], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(csvBlob);
+    a.download = 'Employees.csv';
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(a.href);
+    a.remove();
 });
+
 
 // simple search
 document.getElementById('search').addEventListener('input', function(e){
@@ -2081,10 +2169,8 @@ let data = [];          // store DB employees
 //     document.querySelectorAll('.delete-btn').forEach(btn => {
 //         btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
 //     });
-
-
-
 // }
+// edit dynamic work
 // function renderEmployeeTable(employees) {
 //     const tbody = document.getElementById('employee-table-body');
 //     if (!tbody) return;
@@ -2170,18 +2256,47 @@ let data = [];          // store DB employees
 //         attachViewListeners();
 //     }
 
-//     // ✅ Edit
+//     // // ✅ Edit
+//     // document.querySelectorAll('[data-act="edit"]').forEach(btn => {
+//     //     btn.addEventListener('click', () => {
+//     //         const emp = employees.find(e => e.id == btn.dataset.id);
+//     //         if (emp) openEditModal(emp);
+//     //     });
+//     // });
+//         // --- Edit buttons
 //     document.querySelectorAll('[data-act="edit"]').forEach(btn => {
 //         btn.addEventListener('click', () => {
 //             const emp = employees.find(e => e.id == btn.dataset.id);
-//             if (emp) openEditModal(emp);
+//             if (emp) {
+//                 openEditModal(emp, updatedEmp => {
+//                     // Update in-memory array
+//                     const index = employees.findIndex(e => e.id == updatedEmp.id);
+//                     if (index > -1) employees[index] = updatedEmp;
+//                     renderEmployeeTable(employees); // re-render dynamically
+//                 });
+//             }
 //         });
 //     });
 
-//     // ✅ Delete
-//     document.querySelectorAll('.delete-btn').forEach(btn => {
-//         btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
+//     // ✅ Delete (Dynamic update)
+// document.querySelectorAll('.delete-btn').forEach(btn => {
+//     btn.addEventListener('click', () => {
+//         const empId = btn.dataset.id;
+
+//         deleteEmployee(empId, success => {
+//             if (success) {
+//                 // remove from employees array
+//                 const idx = employees.findIndex(e => e.id == empId);
+//                 if (idx > -1) {
+//                     employees.splice(idx, 1); // remove one
+//                     renderEmployeeTable(employees); // refresh table instantly
+//                 }
+//             } else {
+//                 Swal.fire('Error', 'Failed to delete employee', 'error');
+//             }
+//         });
 //     });
+// });
 
 //     // --- Helper for SweetAlert2 View ---
 //     function attachViewListeners() {
@@ -2232,18 +2347,384 @@ let data = [];          // store DB employees
 //         });
 //     }
 // }
+//probacation logic 
+// function renderEmployeeTable(employees) {
+//     const tbody = document.getElementById('employee-table-body');
+//     if (!tbody) return;
+
+//     // Helper: compute status (Probation/Active)
+//     function getEmployeeStatus(emp) {
+//         if (!emp.joining_date && !emp.joiningDate) return '';
+//         const joiningDate = new Date(emp.joining_date || emp.joiningDate);
+//         const today = new Date();
+//         const diffMonths = (today.getFullYear() - joiningDate.getFullYear()) * 12 
+//                          + (today.getMonth() - joiningDate.getMonth());
+//         return diffMonths >= 3 ? 'Active' : 'Probation';
+//     }
+
+//     tbody.innerHTML = ''; // clear previous rows
+
+//     employees.forEach((emp, index) => {
+//         const tr = document.createElement('tr');
+
+//         tr.innerHTML = `
+//             <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
+//             <td>${index + 1}</td>
+//             <td>${emp.name || ''}</td>
+//             <td>${emp.emp_id || emp.empId || ''}</td>
+//             <td>${emp.personal_email || emp.personalEmail || ''}</td>
+//             <td>${emp.official_email || emp.officialEmail || ''}</td>
+//             <td>${emp.department || ''}</td>
+//             <td>${emp.joining_date || emp.joiningDate || ''}</td>
+//             <td>${emp.dob || ''}</td>
+//             <td>${emp.salary || ''}</td>
+//             <td>${emp.exit_date || emp.exitDate || ''}</td>
+//             <td>${emp.tenure || ''}</td>
+//             <td>${emp.status || getEmployeeStatus(emp)}</td>
+//             <td>${emp.blood_group || emp.bloodGroup || ''}</td>
+//             <td>${emp.personal_phone || emp.personalPhone || ''}</td>
+//             <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
+//             <td>${emp.account_number || emp.accountNumber || ''}</td>
+//             <td>${emp.ifsc || ''}</td>
+//             <td>${emp.pan || ''}</td>
+//             <td>${emp.aadhar || ''}</td>
+//             <td>
+//                 <button style="
+//                     background-color: #3498db; 
+//                     color: #fff; 
+//                     font-weight: 700;
+//                     padding: 6px 12px;
+//                     border: 1px solid #2980b9;
+//                     border-radius: 6px;
+//                     cursor: pointer;
+//                 " class="view-btn" data-id="${emp.id}">👁️ View</button>
+
+//                 <button style="
+//                     background-color: #f1c40f; 
+//                     color: #000; 
+//                     font-weight: 700;
+//                     padding: 6px 12px;
+//                     border: 1px solid #d4ac0d;
+//                     border-radius: 6px;
+//                     cursor: pointer;
+//                 " class="btn" data-act="edit" data-id="${emp.id}">✏️ Edit</button>
+
+//                 <button style="
+//                     background-color: #e74c3c; 
+//                     color: #fff; 
+//                     font-weight: 700;
+//                     padding: 6px 12px;
+//                     border: 1px solid #c0392b;
+//                     border-radius: 6px;
+//                     cursor: pointer;
+//                 " class="delete-btn" data-id="${emp.id || emp.emp_id || emp.empId}">🗑️ Delete</button>
+//             </td>
+//         `;
+
+//         tbody.appendChild(tr);
+//     });
+
+//     // ✅ Load SweetAlert2 only once
+//     if (!window._sweetalertLoaded) {
+//         const script = document.createElement('script');
+//         script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+//         script.onload = attachViewListeners;
+//         document.head.appendChild(script);
+//         window._sweetalertLoaded = true;
+//     } else {
+//         attachViewListeners();
+//     }
+
+//     // --- Edit buttons
+//     document.querySelectorAll('[data-act="edit"]').forEach(btn => {
+//         btn.addEventListener('click', () => {
+//             const emp = employees.find(e => e.id == btn.dataset.id);
+//             if (emp) {
+//                 openEditModal(emp, updatedEmp => {
+//                     // Update in-memory array
+//                     const index = employees.findIndex(e => e.id == updatedEmp.id);
+//                     if (index > -1) employees[index] = updatedEmp;
+//                     renderEmployeeTable(employees); // re-render dynamically
+//                 });
+//             }
+//         });
+//     });
+
+//     // --- Delete buttons
+//     document.querySelectorAll('.delete-btn').forEach(btn => {
+//         btn.addEventListener('click', () => {
+//             const empId = btn.dataset.id;
+//             // Optional: confirm delete
+//             if (confirm("Are you sure you want to delete this employee?")) {
+//                 // Remove from array
+//                 employees = employees.filter(emp => emp.id != empId);
+//                 renderEmployeeTable(employees); // re-render dynamically
+//                 // TODO: also call backend delete API if needed
+//             }
+//         });
+//     });
+
+//     // --- SweetAlert2 View
+//     function attachViewListeners() {
+//         document.querySelectorAll('.view-btn').forEach(btn => {
+//             btn.addEventListener('click', () => {
+//                 const emp = employees.find(e => e.id == btn.dataset.id);
+//                 if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+//                 Swal.fire({
+//                     title: `${emp.name} (${emp.emp_id || emp.empId})`,
+//                     html: `
+//                         <div style="
+//                             display: grid;
+//                             grid-template-columns: 180px 1fr;
+//                             gap: 6px 12px;
+//                             text-align: left;
+//                             line-height: 1.6;
+//                             font-size: 15px;
+//                         ">
+//                             <div>🏢 <b>Department :</b></div><div>${emp.department || ''}</div>
+//                             <div>📧 <b>Personal Email :</b></div>
+//                             <div><a href="mailto:${emp.personal_email || emp.personalEmail}" style="color:#3498db; text-decoration:none;">
+//                                 ${emp.personal_email || emp.personalEmail}</a></div>
+
+//                             <div>💼 <b>Official Email :</b></div>
+//                             <div><a href="mailto:${emp.official_email || emp.officialEmail}" style="color:#3498db; text-decoration:none;">
+//                                 ${emp.official_email || emp.officialEmail}</a></div>
+
+//                             <div>🩸 <b>Blood Group :</b></div><div>${emp.blood_group || emp.bloodGroup || ''}</div>
+//                             <div>📱 <b>Personal Phone :</b></div><div>${emp.personal_phone || emp.personalPhone || ''}</div>
+//                             <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact || ''}</div>
+//                             <div>🗓️ <b>Joining Date :</b></div><div>${emp.joining_date || emp.joiningDate || ''}</div>
+//                             <div>🎂 <b>DOB :</b></div><div>${emp.dob || ''}</div>
+//                             <div>💰 <b>Salary :</b></div><div>₹${emp.salary || ''}</div>
+//                             <div>🚪 <b>Exit Date :</b></div><div>${emp.exit_date || emp.exitDate || ''}</div>
+//                             <div>⏳ <b>Tenure :</b></div><div>${emp.tenure || ''}</div>
+//                             <div>✅ <b>Status :</b></div><div>${emp.status || getEmployeeStatus(emp)}</div>
+//                             <div>🏦 <b>Account :</b></div><div>${emp.account_number || emp.accountNumber || ''}</div>
+//                             <div>🏧 <b>IFSC :</b></div><div>${emp.ifsc || ''}</div>
+//                             <div>🆔 <b>PAN :</b></div><div>${emp.pan || ''}</div>
+//                             <div>🪪 <b>Aadhar :</b></div><div>${emp.aadhar || ''}</div>
+//                         </div>
+//                     `,
+//                     icon: 'info',
+//                     confirmButtonText: 'Close'
+//                 });
+//             });
+//         });
+//     }
+// }
+
+// Track which tab is currently active
+
+
+// function renderEmployeeTable(employees) {
+//     const tbody = document.getElementById('employee-table-body');
+//     if (!tbody) return;
+
+//     // 🔎 Cache full list for searching
+//     if (!renderEmployeeTable._allEmployees) {
+//         renderEmployeeTable._allEmployees = [...employees];
+//     }
+
+//     tbody.innerHTML = ''; // clear previous rows
+
+//     employees.forEach((emp, index) => {
+//         const tr = document.createElement('tr');
+
+//         tr.innerHTML = `
+//             <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
+//             <td>${index + 1}</td>
+//             <td>${emp.name || ''}</td>
+//             <td>${emp.emp_id || emp.empId || ''}</td>
+//             <td>${emp.personal_email || emp.personalEmail || ''}</td>
+//             <td>${emp.official_email || emp.officialEmail || ''}</td>
+//             <td>${emp.department || ''}</td>
+//             <td>${emp.joining_date || emp.joiningDate || ''}</td>
+//             <td>${emp.dob || ''}</td>
+//             <td>${emp.salary || ''}</td>
+//             <td>${emp.exit_date || emp.exitDate || ''}</td>
+//             <td>${emp.tenure || ''}</td>
+//             <td>${emp.status || ''}</td>
+//             <td>${emp.wot_allowance || emp.wotAllowance || ''}</td> 
+//             <td>${emp.blood_group || emp.bloodGroup || ''}</td>
+//             <td>${emp.personal_phone || emp.personalPhone || ''}</td>
+//             <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
+//             <td>${emp.account_number || emp.accountNumber || ''}</td>
+//             <td>${emp.ifsc || ''}</td>
+//             <td>${emp.pan || ''}</td>
+//             <td>${emp.aadhar || ''}</td>
+//            <td>
+//     <button style="
+//         background-color: #3498db;
+//         color: #fff;
+//         font-weight: 700;
+//         padding: 6px 12px;
+//         border: 1px solid #2980b9;
+//         border-radius: 6px;
+//         cursor: pointer;
+//     " class="view-btn" data-id="${emp.id}">👁️ View</button>
+
+//     <button 
+//     style="
+//         background-color: #f1c40f;
+//         color: #000;
+//         font-weight: 700;
+//         padding: 6px 12px;
+//         border: 1px solid #d4ac0d;
+//         border-radius: 6px;
+//         cursor: pointer;
+//     " 
+//     class="btn" 
+//     data-act="edit" 
+//     data-id="${emp.id}">
+//     ✏️ Edit
+// </button>
+
+//     <button style="
+//         background-color: #e74c3c;
+//         color: #fff;
+//         font-weight: 700;
+//         padding: 6px 12px;
+//         border: 1px solid #c0392b;
+//         border-radius: 6px;
+//         cursor: pointer;
+//     " class="delete-btn" data-id="${emp.emp_id || emp.empId || ''}">🗑️ Delete</button>
+// </td>
+//         `;
+
+//         tbody.appendChild(tr);
+//     });
+
+//     // ✅ View (SweetAlert2) – load only once
+//     if (!window._sweetalertLoaded) {
+//         const script = document.createElement('script');
+//         script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+//         script.onload = attachViewListeners;
+//         document.head.appendChild(script);
+//         window._sweetalertLoaded = true;
+//     } else {
+//         attachViewListeners();
+//     }
+
+//     // --- Edit buttons
+//     document.querySelectorAll('[data-act="edit"]').forEach(btn => {
+//         btn.addEventListener('click', () => {
+//             const emp = employees.find(e => e.id == btn.dataset.id);
+//             if (emp) {
+//                 openEditModal(emp, updatedEmp => {
+//                     const index = employees.findIndex(e => e.id == updatedEmp.id);
+//                     if (index > -1) {
+//                         employees[index] = updatedEmp;
+//                         // also update the cached full list
+//                         const masterIdx = renderEmployeeTable._allEmployees.findIndex(e => e.id == updatedEmp.id);
+//                         if (masterIdx > -1) renderEmployeeTable._allEmployees[masterIdx] = updatedEmp;
+//                         renderEmployeeTable(employees); // re-render dynamically
+//                     }
+//                 });
+//             }
+//         });
+//     });
+
+//     // ✅ Delete (Dynamic update)
+//     document.querySelectorAll('.delete-btn').forEach(btn => {
+//         btn.addEventListener('click', () => {
+//             const empId = btn.dataset.id;
+
+//             deleteEmployee(empId, success => {
+//                 if (success) {
+//                     const idx = employees.findIndex(e => e.id == empId);
+//                     if (idx > -1) employees.splice(idx, 1);
+//                     const masterIdx = renderEmployeeTable._allEmployees.findIndex(e => e.id == empId);
+//                     if (masterIdx > -1) renderEmployeeTable._allEmployees.splice(masterIdx, 1);
+//                     renderEmployeeTable(employees);
+//                 } else {
+//                     Swal.fire('Error', 'Failed to delete employee', 'error');
+//                 }
+//             });
+//         });
+//     });
+
+//     function attachViewListeners() {
+//         document.querySelectorAll('.view-btn').forEach(btn => {
+//             btn.addEventListener('click', () => {
+//                 const emp = employees.find(e => e.id == btn.dataset.id);
+//                 if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+//                 Swal.fire({
+//                     title: `${emp.name} (${emp.emp_id || emp.empId})`,
+//                     html: `
+//                         <div style="
+//                             display: grid;
+//                             grid-template-columns: 180px 1fr;
+//                             gap: 6px 12px;
+//                             text-align: left;
+//                             line-height: 1.6;
+//                             font-size: 15px;
+//                         ">
+//                             <div>🏢 <b>Department :</b></div><div>${emp.department || ''}</div>
+//                             <div>📧 <b>Personal Email :</b></div>
+//                             <div><a href="mailto:${emp.personal_email || emp.personalEmail}" style="color:#3498db; text-decoration:none;">
+//                                 ${emp.personal_email || emp.personalEmail}</a></div>
+//                             <div>💼 <b>Official Email :</b></div>
+//                             <div><a href="mailto:${emp.official_email || emp.officialEmail}" style="color:#3498db; text-decoration:none;">
+//                                 ${emp.official_email || emp.officialEmail}</a></div>
+//                             <div>🩸 <b>Blood Group :</b></div><div>${emp.blood_group || emp.bloodGroup || ''}</div>
+//                             <div>📱 <b>Personal Phone :</b></div><div>${emp.personal_phone || emp.personalPhone || ''}</div>
+//                             <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact || ''}</div>
+//                             <div>🗓️ <b>Joining Date :</b></div><div>${emp.joining_date || emp.joiningDate || ''}</div>
+//                             <div>🎂 <b>DOB :</b></div><div>${emp.dob || ''}</div>
+//                             <div>💰 <b>Salary :</b></div><div>₹${emp.salary || ''}</div>
+//                             <div>🚪 <b>Exit Date :</b></div><div>${emp.exit_date || emp.exitDate || ''}</div>
+//                             <div>⏳ <b>Tenure :</b></div><div>${emp.tenure || ''}</div>
+//                             <div>✅ <b>Status :</b></div><div>${emp.status || ''}</div>
+//                             <div>💸 <b>WOT Allowance :</b></div>
+// <div>${emp.wot_allowance || emp.wotAllowance || ''}</div>
+//                             <div>🏦 <b>Account :</b></div><div>${emp.account_number || emp.accountNumber || ''}</div>
+//                             <div>🏧 <b>IFSC :</b></div><div>${emp.ifsc || ''}</div>
+//                             <div>🆔 <b>PAN :</b></div><div>${emp.pan || ''}</div>
+//                             <div>🪪 <b>Aadhar :</b></div><div>${emp.aadhar || ''}</div>
+//                         </div>
+//                     `,
+//                     icon: 'info',
+//                     confirmButtonText: 'Close'
+//                 });
+//             });
+//         });
+//     }
+
+//     // 🔎 SEARCH FILTER (runs only once)
+//     if (!renderEmployeeTable._searchAttached) {
+//         const searchInput = document.getElementById('search');
+//         if (searchInput) {
+//             searchInput.addEventListener('input', () => {
+//                 const query = searchInput.value.toLowerCase();
+//                 const filtered = renderEmployeeTable._allEmployees.filter(emp =>
+//                     [
+//                         emp.name,
+//                         emp.emp_id || emp.empId,
+//                         emp.personal_email || emp.personalEmail,
+//                         emp.official_email || emp.officialEmail,
+//                         emp.department,
+//                         emp.ifsc,
+//                         emp.pan,
+//                         emp.aadhar
+//                     ]
+//                     .filter(Boolean)
+//                     .some(val => String(val).toLowerCase().includes(query))
+//                 );
+//                 renderEmployeeTable(filtered);
+//             });
+//             renderEmployeeTable._searchAttached = true;
+//         }
+//     }
+// }
 function renderEmployeeTable(employees) {
     const tbody = document.getElementById('employee-table-body');
     if (!tbody) return;
 
-    // Helper: compute status (Probation/Active)
-    function getEmployeeStatus(emp) {
-        if (!emp.joining_date && !emp.joiningDate) return '';
-        const joiningDate = new Date(emp.joining_date || emp.joiningDate);
-        const today = new Date();
-        const diffMonths = (today.getFullYear() - joiningDate.getFullYear()) * 12 
-                         + (today.getMonth() - joiningDate.getMonth());
-        return diffMonths >= 3 ? 'Active' : 'Probation';
+    // 🔎 Cache full list for searching
+    if (!renderEmployeeTable._allEmployees) {
+        renderEmployeeTable._allEmployees = [...employees];
     }
 
     tbody.innerHTML = ''; // clear previous rows
@@ -2251,31 +2732,43 @@ function renderEmployeeTable(employees) {
     employees.forEach((emp, index) => {
         const tr = document.createElement('tr');
 
+        // ✅ Normalize wotAllowance to TRUE / FALSE
+        const wot =
+            (emp.wot_allowance ?? emp.wotAllowance ?? '')
+                .toString()
+                .trim()
+                .toLowerCase();
+
+        const wotDisplay = (wot === 'true' || wot === '1' || wot === 'yes') ? 'TRUE' :
+                           (wot === 'false' || wot === '0' || wot === 'no') ? 'FALSE' : '';
+
         tr.innerHTML = `
-            <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
-            <td>${index + 1}</td>
-            <td>${emp.name || ''}</td>
-            <td>${emp.emp_id || emp.empId || ''}</td>
-            <td>${emp.personal_email || emp.personalEmail || ''}</td>
-            <td>${emp.official_email || emp.officialEmail || ''}</td>
-            <td>${emp.department || ''}</td>
-            <td>${emp.joining_date || emp.joiningDate || ''}</td>
-            <td>${emp.dob || ''}</td>
-            <td>${emp.salary || ''}</td>
-            <td>${emp.exit_date || emp.exitDate || ''}</td>
-            <td>${emp.tenure || ''}</td>
-            <td>${emp.status || getEmployeeStatus(emp)}</td>
-            <td>${emp.blood_group || emp.bloodGroup || ''}</td>
-            <td>${emp.personal_phone || emp.personalPhone || ''}</td>
-            <td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
-            <td>${emp.account_number || emp.accountNumber || ''}</td>
-            <td>${emp.ifsc || ''}</td>
-            <td>${emp.pan || ''}</td>
-            <td>${emp.aadhar || ''}</td>
-            <td>
+         <td><input type="checkbox" class="select-emp" data-id="${emp.id}"></td>
+<td>${index + 1}</td>
+<td>${emp.name || ''}</td>
+<td>${emp.emp_id || emp.empId || ''}</td>
+<td>${emp.personal_email || emp.personalEmail || ''}</td>
+<td>${emp.official_email || emp.officialEmail || ''}</td>
+<td>${emp.department || ''}</td>
+<td>${emp.joining_date || emp.joiningDate || ''}</td>
+<td>${emp.dob || ''}</td>
+<td>${emp.salary || ''}</td>
+<td>${emp.exit_date || emp.exitDate || ''}</td>
+<td>${emp.tenure || ''}</td>
+<td>${emp.status || ''}</td>
+<td>${wotDisplay}</td> <!-- WOT Allowance -->
+<td>${emp.blood_group || emp.bloodGroup || ''}</td>
+<td>${emp.personal_phone || emp.personalPhone || ''}</td>
+<td>${emp.emergency_contact || emp.emergencyContact || ''}</td>
+<td>${emp.account_number != null ? emp.account_number.toString() : emp.accountNumber || ''}</td>
+<td>${emp.ifsc || ''}</td>
+<td>${emp.pan || ''}</td>
+<td>${emp.aadhar != null ? emp.aadhar.toString() : ''}</td>
+
+           <td>
                 <button style="
-                    background-color: #3498db; 
-                    color: #fff; 
+                    background-color: #3498db;
+                    color: #fff;
                     font-weight: 700;
                     padding: 6px 12px;
                     border: 1px solid #2980b9;
@@ -2284,8 +2777,8 @@ function renderEmployeeTable(employees) {
                 " class="view-btn" data-id="${emp.id}">👁️ View</button>
 
                 <button style="
-                    background-color: #f1c40f; 
-                    color: #000; 
+                    background-color: #f1c40f;
+                    color: #000;
                     font-weight: 700;
                     padding: 6px 12px;
                     border: 1px solid #d4ac0d;
@@ -2294,21 +2787,21 @@ function renderEmployeeTable(employees) {
                 " class="btn" data-act="edit" data-id="${emp.id}">✏️ Edit</button>
 
                 <button style="
-                    background-color: #e74c3c; 
-                    color: #fff; 
+                    background-color: #e74c3c;
+                    color: #fff;
                     font-weight: 700;
                     padding: 6px 12px;
                     border: 1px solid #c0392b;
                     border-radius: 6px;
                     cursor: pointer;
-                " class="delete-btn" data-id="${emp.id || emp.emp_id || emp.empId}">🗑️ Delete</button>
-            </td>
+                " class="delete-btn" data-id="${emp.emp_id || emp.empId || ''}">🗑️ Delete</button>
+           </td>
         `;
 
         tbody.appendChild(tr);
     });
 
-    // ✅ Load SweetAlert2 only once
+    // ✅ View (SweetAlert2) – load only once
     if (!window._sweetalertLoaded) {
         const script = document.createElement('script');
         script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
@@ -2325,35 +2818,50 @@ function renderEmployeeTable(employees) {
             const emp = employees.find(e => e.id == btn.dataset.id);
             if (emp) {
                 openEditModal(emp, updatedEmp => {
-                    // Update in-memory array
                     const index = employees.findIndex(e => e.id == updatedEmp.id);
-                    if (index > -1) employees[index] = updatedEmp;
-                    renderEmployeeTable(employees); // re-render dynamically
+                    if (index > -1) {
+                        employees[index] = updatedEmp;
+                        const masterIdx = renderEmployeeTable._allEmployees.findIndex(e => e.id == updatedEmp.id);
+                        if (masterIdx > -1) renderEmployeeTable._allEmployees[masterIdx] = updatedEmp;
+                        renderEmployeeTable(employees); // re-render dynamically
+                    }
                 });
             }
         });
     });
 
-    // --- Delete buttons
+    // ✅ Delete (Dynamic update)
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const empId = btn.dataset.id;
-            // Optional: confirm delete
-            if (confirm("Are you sure you want to delete this employee?")) {
-                // Remove from array
-                employees = employees.filter(emp => emp.id != empId);
-                renderEmployeeTable(employees); // re-render dynamically
-                // TODO: also call backend delete API if needed
-            }
+
+            deleteEmployee(empId, success => {
+                if (success) {
+                    const idx = employees.findIndex(e => e.id == empId);
+                    if (idx > -1) employees.splice(idx, 1);
+                    const masterIdx = renderEmployeeTable._allEmployees.findIndex(e => e.id == empId);
+                    if (masterIdx > -1) renderEmployeeTable._allEmployees.splice(masterIdx, 1);
+                    renderEmployeeTable(employees);
+                } else {
+                    Swal.fire('Error', 'Failed to delete employee', 'error');
+                }
+            });
         });
     });
 
-    // --- SweetAlert2 View
     function attachViewListeners() {
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const emp = employees.find(e => e.id == btn.dataset.id);
                 if (!emp) return Swal.fire('Error', 'Employee not found', 'error');
+
+                const wot =
+                    (emp.wot_allowance ?? emp.wotAllowance ?? '')
+                        .toString()
+                        .trim()
+                        .toLowerCase();
+                const wotDisplay = (wot === 'true' || wot === '1' || wot === 'yes') ? 'TRUE' :
+                                   (wot === 'false' || wot === '0' || wot === 'no') ? 'FALSE' : '';
 
                 Swal.fire({
                     title: `${emp.name} (${emp.emp_id || emp.empId})`,
@@ -2370,11 +2878,9 @@ function renderEmployeeTable(employees) {
                             <div>📧 <b>Personal Email :</b></div>
                             <div><a href="mailto:${emp.personal_email || emp.personalEmail}" style="color:#3498db; text-decoration:none;">
                                 ${emp.personal_email || emp.personalEmail}</a></div>
-
                             <div>💼 <b>Official Email :</b></div>
                             <div><a href="mailto:${emp.official_email || emp.officialEmail}" style="color:#3498db; text-decoration:none;">
                                 ${emp.official_email || emp.officialEmail}</a></div>
-
                             <div>🩸 <b>Blood Group :</b></div><div>${emp.blood_group || emp.bloodGroup || ''}</div>
                             <div>📱 <b>Personal Phone :</b></div><div>${emp.personal_phone || emp.personalPhone || ''}</div>
                             <div>☎️ <b>Emergency Contact :</b></div><div>${emp.emergency_contact || emp.emergencyContact || ''}</div>
@@ -2383,11 +2889,12 @@ function renderEmployeeTable(employees) {
                             <div>💰 <b>Salary :</b></div><div>₹${emp.salary || ''}</div>
                             <div>🚪 <b>Exit Date :</b></div><div>${emp.exit_date || emp.exitDate || ''}</div>
                             <div>⏳ <b>Tenure :</b></div><div>${emp.tenure || ''}</div>
-                            <div>✅ <b>Status :</b></div><div>${emp.status || getEmployeeStatus(emp)}</div>
-                            <div>🏦 <b>Account :</b></div><div>${emp.account_number || emp.accountNumber || ''}</div>
+                            <div>✅ <b>Status :</b></div><div>${emp.status || ''}</div>
+                            <div>💸 <b>WOT Allowance :</b></div><div>${wotDisplay}</div>
+                            <div>🏦 <b>Account :</b></div><div>${emp.account_number != null ? emp.account_number.toString() : emp.accountNumber || ''}</div>
                             <div>🏧 <b>IFSC :</b></div><div>${emp.ifsc || ''}</div>
                             <div>🆔 <b>PAN :</b></div><div>${emp.pan || ''}</div>
-                            <div>🪪 <b>Aadhar :</b></div><div>${emp.aadhar || ''}</div>
+                            <div>🪪 <b>Aadhar :</b></div><div>${emp.aadhar != null ? emp.aadhar.toString() : ''}</div>
                         </div>
                     `,
                     icon: 'info',
@@ -2396,9 +2903,34 @@ function renderEmployeeTable(employees) {
             });
         });
     }
-}
 
-// Track which tab is currently active
+    // 🔎 SEARCH FILTER (runs only once)
+    if (!renderEmployeeTable._searchAttached) {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                const filtered = renderEmployeeTable._allEmployees.filter(emp =>
+                    [
+                        emp.name,
+                        emp.emp_id || emp.empId,
+                        emp.personal_email || emp.personalEmail,
+                        emp.official_email || emp.officialEmail,
+                        emp.department,
+                        emp.ifsc,
+                        emp.pan,
+                        emp.aadhar,
+                        emp.wot_allowance || emp.wotAllowance   // ✅ include for searching
+                    ]
+                    .filter(Boolean)
+                    .some(val => String(val).toLowerCase().includes(query))
+                );
+                renderEmployeeTable(filtered);
+            });
+            renderEmployeeTable._searchAttached = true;
+        }
+    }
+}
 let currentFilter = 'all';
 
 // Filter employees based on currentFilter
@@ -2614,15 +3146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //     // Call render function again to filter
 //     renderEmployeeTable(employees);
 // });
-
-
-
-
 let editingId = null; // Global DB id
-
-
-
-
 // --- Tab Handling ---
 function showTab(name){
     qsa('.tab').forEach(t => t.classList.remove('active'));
@@ -2723,11 +3247,6 @@ async function saveEmployee(e) {
     //     alert("Failed to save employee");
     // }
 }
-
-
-
-
-
 // --- Event Listeners ---
 qs('#save-employee-btn')?.addEventListener('click', saveEmployee);
 qs('#close-modal-btn')?.addEventListener('click', closeModal);
